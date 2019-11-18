@@ -31,4 +31,6 @@ return [
         'price' => 'price',
     ],
 
+    'table_prefix' => 'webshop_',
+
 ];
