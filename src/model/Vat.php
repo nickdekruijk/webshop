@@ -1,6 +1,6 @@
 <?php
 
-namespace NickDeKruijk\Webshop;
+namespace NickDeKruijk\Webshop\Model;
 
 use Illuminate\Database\Eloquent\Model;
 

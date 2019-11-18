@@ -25,9 +25,6 @@
     "autoload": {
         "psr-4": {
             "NickDeKruijk\\Webshop\\": "src/"
-        },
-        "psr-4": {
-            "NickDeKruijk\\Webshop\\": "src/models"
         }
     }
 }
