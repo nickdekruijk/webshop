@@ -31,6 +31,16 @@ return [
         'price' => 'price',
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | table_prefix
+    |--------------------------------------------------------------------------
+    |
+    | The package requires some migrations to run, the table names will be
+    | prefixed with a string to prevent conflicts with already present tables
+    |
+    */
+
     'table_prefix' => 'webshop_',
 
 ];
