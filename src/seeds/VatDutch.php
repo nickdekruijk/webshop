@@ -3,7 +3,7 @@
 namespace NickDeKruijk\Webshop\Seeds;
 
 use Illuminate\Database\Seeder;
-use NickDeKruijk\Webshop\Vat;
+use NickDeKruijk\Webshop\Model\Vat;
 
 class VatDutch extends Seeder
 {
