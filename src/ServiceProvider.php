@@ -29,5 +29,10 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__.'/config.php', 'webshop');
+
+        // Register the main class to use with the facade
+        $this->app->singleton('nickdekruijk-webshop', function () {
+            return new Webshop;
+        });
     }
 }
