@@ -20,4 +20,9 @@ class CartItem extends Model
         $this->table = config('webshop.table_prefix') . 'cart_items';
     }
 
+    public function product()
+    {
+        return $this->belongsTo(config('webshop.product_model'));
+    }
+
 }
