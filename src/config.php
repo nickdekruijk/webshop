@@ -26,9 +26,26 @@ return [
 
     'product_model' => 'App\Product',
 
+    /*
+    |--------------------------------------------------------------------------
+    | product_columns
+    |--------------------------------------------------------------------------
+    |
+    | Use these Product model attributes for cart and checkout. Make sure your
+    | Product model (above) returns these columns/attributes.
+    | Required: id, title, price, vat_id
+    |
+    */
+
     'product_columns' => [
-        'title' => 'title',
+        // 'cart_items_column' => 'product_attribute'
+        'product_id' => 'id',
+        'title' => 'name',
+        'description' => 'description',
+        'image' => 'image',             // url to a single image
+        'url' => 'url',                 // url to link to when viewing cart contents
         'price' => 'price',
+        'vat_id' => 'vat_id',           // Must match a valid id from webshop_vats table
     ],
 
     /*
