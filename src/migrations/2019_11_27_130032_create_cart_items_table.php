@@ -18,16 +18,13 @@ class CreateCartItemsTable extends Migration
             $table->bigInteger('cart_id')->unsigned()->index();
             $table->bigInteger('product_id')->unsigned()->index();
             $table->bigInteger('product_option_id')->unsigned()->nullable()->index();
-            $table->string('title');
-            $table->text('description')->nullable();
-            $table->string('image')->nullable();
-            $table->string('url')->nullable();
             $table->decimal('quantity', 15, 5);
-            $table->decimal('price', 15, 2);
-            $table->bigInteger('vat_id')->unsigned()->index();
             $table->timestamps();
+
             $table->foreign('cart_id')->references('id')->on(config('webshop.table_prefix') . 'carts')->onDelete('cascade');
-            $table->foreign('vat_id')->references('id')->on(config('webshop.table_prefix') . 'vats')->onDelete('cascade');
+
+            $model = config('webshop.product_model');
+            $table->foreign('product_id')->references('id')->on((new $model)->getTable())->onDelete('cascade');
         });
     }
 

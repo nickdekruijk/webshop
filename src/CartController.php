@@ -95,14 +95,10 @@ class CartController extends Controller
         } else {
             // Create a new one instead
             $cart_item = new CartItem;
-            $cart_item->quantity = $quantity;
             $cart_item->cart_id = $cart->id;
+            $cart_item->product_id = $product->id;
             $cart_item->product_option_id = $product_option_id;
-        }
-
-        // Update columns
-        foreach(config('webshop.product_columns') as $column => $attribute) {
-            $cart_item->$column = $product->$attribute;
+            $cart_item->quantity = $quantity;
         }
 
         // Save it
