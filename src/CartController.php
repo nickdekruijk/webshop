@@ -10,7 +10,7 @@ use Auth;
 class CartController extends Controller
 {
     // Get current Cart based on sessionId or user
-    private function getCurrent()
+    private static function getCurrent($create = false)
     {
         // Session variable to store cart id in
         $session_cart_id = config('webshop.table_prefix') . 'cart_id';
@@ -42,19 +42,19 @@ class CartController extends Controller
             }
         }
 
-        // Still no Cart? Create a new one
-        $cart = new Cart;
-        if (Auth::check()) {
-            $cart->session_id = session()->getId();
-            $cart->user_id = Auth::user()->id;
+        // Still no Cart? Create a new one if requested
+        if ($create) {
+            $cart = new Cart;
+            if (Auth::check()) {
+                $cart->session_id = session()->getId();
+                $cart->user_id = Auth::user()->id;
+            }
+            $cart->save();
+            // Store the id in the session for performance
+            session([$session_cart_id => $cart->id]);
+            // And return it
+            return $cart;
         }
-        $cart->save();
-
-        // Store the id in the session for performance
-        session([$session_cart_id => $cart->id]);
-
-        // And return it
-        return $cart;
     }
 
     // Add a product to the cart
@@ -64,8 +64,8 @@ class CartController extends Controller
         $product = config('webshop.product_model');
         $product = (new $product)->findOrFail($product_id);
 
-        // Get the current cart
-        $cart = $this->getCurrent();
+        // Get the current cart, create if needed
+        $cart = $this->getCurrent(true);
 
         // Check if product is already in cart
         $cart_item = $cart->items()->where('product_id', $product->id)->where('product_option_id', $product_option_id)->first();
