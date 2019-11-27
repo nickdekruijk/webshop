@@ -60,4 +60,18 @@ return [
 
     'table_prefix' => 'webshop_',
 
+    /*
+    |--------------------------------------------------------------------------
+    | routes_prefix
+    |--------------------------------------------------------------------------
+    |
+    | Some actions like add to cart require unique urls. These routes will be
+    | created automaticaly and to avoid conflicts with other routes from the
+    | app you can add prefix to those urls here.
+    | Add to cart will be /webshop/cart/add/{product_id} for example
+    |
+    */
+
+    'routes_prefix' => 'webshop',
+
 ];
