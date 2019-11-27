@@ -106,4 +106,14 @@ class CartController extends Controller
 
         return back()->with(['webshopStatus' => 'addedtocart']);
     }
+
+    // Return all cart content
+    public static function getItems()
+    {
+        $cart = self::getCurrent();
+        if (!$cart) {
+            return [];
+        }
+        return $cart->items()->with('product')->get();
+    }
 }
