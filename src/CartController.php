@@ -107,5 +107,7 @@ class CartController extends Controller
 
         // Save it
         $cart_item->save();
+
+        return back()->with(['webshopStatus' => 'addedtocart']);
     }
 }
