@@ -57,6 +57,26 @@ class CartController extends Controller
         }
     }
 
+    // Return the total count of items in the cart
+    // When $unique = true it returns the total amount of unique items in the cart, even if their quantity is zero
+    // When $unique = false (default) it returns the real amount of items (all quantities combined)
+    public static function count($unique = false)
+    {
+        $cart = self::getCurrent();
+        if (!$cart) {
+            return 0;
+        }
+        if ($unique) {
+            return $cart->items->count();
+        } else {
+            $count = 0;
+            foreach($cart->items as $item) {
+                $count += $item->quantity;
+            }
+            return $count;
+        }
+    }
+
     // Add a product to the cart
     public function add($product_id, $quantity = 1, $product_option_id = null)
     {
