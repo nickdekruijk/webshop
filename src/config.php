@@ -31,8 +31,8 @@ return [
     | product_columns
     |--------------------------------------------------------------------------
     |
-    | Use these Product model attributes for cart and checkout. Make sure your
-    | Product model (above) returns these columns/attributes.
+    | Use these Product model attributes for checkout. Make sure your Product
+    | model (above) returns these columns/attributes.
     | Required: id, title, price, vat_id
     |
     */
