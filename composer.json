@@ -23,9 +23,9 @@
             "providers": [
                 "NickDeKruijk\\Webshop\\ServiceProvider"
             ],
-			"aliases": {
-				"Webshop": "NickDeKruijk\\Webshop\\WebshopFacade"
-			}
+            "aliases": {
+            	"Webshop": "NickDeKruijk\\Webshop\\WebshopFacade"
+            }
         }
     }
 }
