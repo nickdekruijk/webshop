@@ -45,8 +45,8 @@ class CartController extends Controller
         // Still no Cart? Create a new one if requested
         if ($create) {
             $cart = new Cart;
+            $cart->session_id = session()->getId();
             if (Auth::check()) {
-                $cart->session_id = session()->getId();
                 $cart->user_id = Auth::user()->id;
             }
             $cart->save();
