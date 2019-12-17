@@ -3,9 +3,9 @@
 namespace NickDeKruijk\Webshop;
 
 use App\Http\Controllers\Controller;
+use Auth;
 use NickDeKruijk\Webshop\Model\Cart;
 use NickDeKruijk\Webshop\Model\CartItem;
-use Auth;
 
 class CartController extends Controller
 {
@@ -70,7 +70,7 @@ class CartController extends Controller
             return $cart->items->count();
         } else {
             $count = 0;
-            foreach($cart->items as $item) {
+            foreach ($cart->items as $item) {
                 $count += $item->quantity;
             }
             return $count;
