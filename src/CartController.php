@@ -90,7 +90,7 @@ class CartController extends Controller
         // Check if product is already in cart
         $cart_item = $cart->items()->where('product_id', $product->id)->where('product_option_id', $product_option_id)->first();
         if ($cart_item) {
-            // Allready in cart, increase quantity
+            // Already in cart, increase quantity
             $cart_item->quantity = $cart_item->quantity + $quantity;
         } else {
             // Create a new one instead
