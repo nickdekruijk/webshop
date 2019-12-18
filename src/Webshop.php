@@ -3,6 +3,10 @@
 namespace NickDeKruijk\Webshop;
 
 use NickDeKruijk\Webshop\Model\Cart;
+use NickDeKruijk\Webshop\Model\ShippingRate;
+use Cache;
+use File;
+use GeoIp2\Database\Reader;
 
 class Webshop
 {
@@ -25,31 +29,104 @@ class Webshop
         return $html;
     }
 
-    // Return HTML table with the cart contents
-    public function showCart()
+    public static function money($amount, $currency = null)
     {
-        $html = '';
-        $html .= '<table class="webshop-cart">';
-        $html .= '<tr>';
-        $html .= '<td'. (config('webshop.product_columns.image') ? ' colspan="2"' : '') . '>Product</td>';
-        $html .= '<td>Price</td>';
-        $html .= '<td>Quantity</td>';
-        $html .= '<td>Total</td>';
-        $html .= '</tr>';
-        foreach (CartController::getItems() as $item) {
-            $html .= '<tr>';
-//             dd($item->product);
-            if (config('webshop.product_columns.image')) {
-                $html .= '<td><img src="' . $item->product[config('webshop.product_columns.image')] . '" alt=""></td>';
+        return ($currency ?: config('webshop.currency', '&euro; ')) . number_format($amount, 2, trans('webshop::cart.dec_point'), trans('webshop::cart.thousands_sep'));
+    }
+
+    public static function geoCountry()
+    {
+        $ip = request()->ip();
+        if ($ip == '127.0.0.1') {
+            $ip = '82.217.110.129';
+        }
+        if ($get = Cache::get('geoip_' . $ip)) {
+            return $get;
+        }
+        $reader = new Reader(storage_path() . '/../vendor/bobey/geoip2-geolite2-composer/GeoIP2/GeoLite2-City.mmdb');
+        $record = $reader->city($ip);
+        Cache::put('geoip_' . $ip, $record->country->isoCode, 3600);
+        return $record->country->isoCode;
+    }
+
+    public static function countries($translation = null)
+    {
+        $countryFile = storage_path() . '/../vendor/mledoze/countries/countries.json';
+        if (!File::exists($countryFile)) {
+            dd('Country file (' . $countryFile . ') not found, is mledoze/countries package loaded?');
+        }
+        $countries = [];
+        foreach (json_decode(File::get($countryFile)) as $country) {
+            if ($translation) {
+                $countries[$country->cca2] = $country->translations->$translation->common;
+            } else {
+                $countries[$country->cca2] = $country->name->common;
             }
+        }
+        // echo '</select>';
+        // dd($country->translations->$translation->common);
+        asort($countries);
+        // dd($countries);
+        return $countries;
+    }
+
+    public function old($key, $default = null)
+    {
+        return session(config('webshop.table_prefix') . 'form.' . $key, $default);
+    }
+
+    // Return HTML table with the cart contents
+    public function showCart($submitButton)
+    {
+        $validOrder = false;
+        $html = '';
+        $html .= '<table class="webshop-cart-table">';
+        $html .= '<tr>';
+        $html .= '<th class="webshop-cart-title">' . trans('webshop::cart.product') . '</th>';
+        $html .= '<th class="webshop-cart-price">' . trans('webshop::cart.price') . '</th>';
+        $html .= '<th class="webshop-cart-quantity">' . trans('webshop::cart.quantity') . '</th>';
+        $html .= '<th class="webshop-cart-total">' . trans('webshop::cart.total') . '</th>';
+        $html .= '</tr>';
+        $weight = 0;
+        $amount = 0;
+        foreach (CartController::getItems()->where('quantity', '>', 0) as $item) {
+            $validOrder = true;
+            $weight += $item->quantity * $item->product[config('webshop.product_columns.weight')];
+            $amount += $item->quantity * $item->product[config('webshop.product_columns.price')];
+            $html .= '<tr class="webshop-cart-quantity-' . +$item->quantity . '">';
             $html .= '<td><div class="webshop-cart-title">' . $item->product[config('webshop.product_columns.title')] . '</div><div class="webshop-cart-description">' . $item->product[config('webshop.product_columns.description')] . '</div></td>';
-            $html .= '<td class="webshop-cart-price">' . $item->product[config('webshop.product_columns.price')] . '</td>';
-            $html .= '<td class="webshop-cart-quantity">' . +$item->quantity . '</td>';
-            $html .= '<td class="webshop-cart-total">' . $item->quantity * $item->product[config('webshop.product_columns.price')] . '</td>';
-//             $html .= '<td>' . $item->product . '</td>';
+            $html .= '<td class="webshop-cart-price">' . self::money($item->product[config('webshop.product_columns.price')]) . '</td>';
+            // $html .= '<td class="webshop-cart-quantity"><a href="" class="webshop-cart-minus"></a><span>' . +$item->quantity . '</span><a href="" class="webshop-cart-plus"></a></td>';
+            $html .= '<td class="webshop-cart-quantity"><input onchange="this.form.submit()" type="number" name="quantity_' . $item['id'] . '" min="0" value="' . +$item->quantity . '"></td>';
+            $html .= '<td class="webshop-cart-total">' . self::money($item->quantity * $item->product[config('webshop.product_columns.price')]) . '</td>';
             $html .= '</tr>';
         }
+        // $html .= '<tr>';
+        // $html .= '<td colspan="3">' . trans('webshop::cart.subtotal') . '</td>';
+        // $html .= '<td class="webshop-cart-total">' . self::money($amount) . '</td>';
+        // $html .= '</tr>';
+        // $html .= '<tr>';
+        // $html .= '<td colspan="3">' . trans('webshop::cart.weight') . '</td>';
+        // $html .= '<td class="webshop-cart-total">' . self::money($weight, ' ') . ' kg</td>';
+        // $html .= '</tr>';
+        $shipping_rate = ShippingRate::valid($amount, $weight, self::old('land', Webshop::geoCountry()))->first();
+        $html .= '<tr>';
+        if ($shipping_rate) {
+            $html .= '<td colspan="3">' . $shipping_rate->title . '</td>';
+            $html .= '<td class="webshop-cart-total">' . self::money($shipping_rate->rate) . '</td>';
+        } else {
+            $validOrder = false;
+            $html .= '<td colspan="4">' . trans('webshop::cart.no-shipping-possible') . '</td>';
+        }
+        $html .= '</tr>';
+        $html .= '<tr>';
+        $html .= '<td colspan="3">' . trans('webshop::cart.total_to_pay') . '</td>';
+        $html .= '<td class="webshop-cart-total">' . self::money($amount + $shipping_rate->rate) . '</td>';
+        $html .= '</tr>';
         $html .= '</table>';
+        if ($validOrder) {
+            $html .= $submitButton;
+        }
         return $html;
     }
 }
