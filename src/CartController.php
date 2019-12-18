@@ -4,6 +4,8 @@ namespace NickDeKruijk\Webshop;
 
 use App\Http\Controllers\Controller;
 use Auth;
+use Session;
+use Illuminate\Http\Request;
 use NickDeKruijk\Webshop\Model\Cart;
 use NickDeKruijk\Webshop\Model\CartItem;
 
@@ -115,5 +117,21 @@ class CartController extends Controller
             return [];
         }
         return $cart->items()->with('product')->get();
+    }
+
+    public function post(Request $request)
+    {
+        foreach (self::getCurrent()->items as $item) {
+            if ($request['quantity_' . $item->id] != $item->quantity) {
+                if ($request['quantity_' . $item->id]) {
+                    $item->quantity = $request['quantity_' . $item->id];
+                } else {
+                    $item->quantity = 0;
+                }
+                $item->save();
+            }
+        }
+        Session::put(config('webshop.table_prefix') . 'form', $request->toArray());
+        return back();
     }
 }
