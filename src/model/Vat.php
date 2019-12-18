@@ -13,8 +13,6 @@ class Vat extends Model
         'high_rate' => 'boolean',
     ];
 
-    protected $table;
-
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);

@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cart extends Model
 {
-    protected $table;
-
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);

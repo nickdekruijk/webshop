@@ -11,8 +11,6 @@ class CartItem extends Model
         'price' => 'decimal:2',
     ];
 
-    protected $table;
-
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
