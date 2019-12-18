@@ -26,4 +26,27 @@ class ShippingRate extends Model
     {
         return $this->belongsTo(Vat::class);
     }
+
+    public function scopeValid($query, $amount, $weight, $country)
+    {
+        $query->where(function ($query) use ($amount) {
+            $query->whereNull('amount_from')->orWhere('amount_from', '>=', $amount);
+        });
+        $query->where(function ($query) use ($amount) {
+            $query->whereNull('amount_to')->orWhere('amount_to', '<', $amount);
+        });
+        $query->where(function ($query) use ($weight) {
+            $query->whereNull('weight_from')->orWhere('weight_from', '<=', $weight);
+        });
+        $query->where(function ($query) use ($weight) {
+            $query->whereNull('weight_to')->orWhere('weight_to', '>=', $weight);
+        });
+        $query->where(function ($query) use ($country) {
+            $query->whereNull('countries')->orWhere('countries', 'LIKE', '%' . $country . '%');
+        });
+        $query->where(function ($query) use ($country) {
+            $query->whereNull('countries_except')->orWhere('countries_except', 'NOT LIKE', '%' . $country . '%');
+        });
+        return $query->where('active', 1)->orderBy('rate');
+    }
 }
