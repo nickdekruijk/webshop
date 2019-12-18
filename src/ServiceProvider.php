@@ -16,6 +16,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             __DIR__.'/config.php' => config_path('webshop.php'),
         ], 'config');
         $this->loadRoutesFrom(__DIR__.'/routes.php');
+        $this->loadTranslationsFrom(__DIR__ . '/lang', 'webshop');
         if (config('webshop.migrations', true)) {
             $this->loadMigrationsFrom(__DIR__.'/migrations');
         }
