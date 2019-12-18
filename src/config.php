@@ -45,6 +45,7 @@ return [
 //         'image' => 'image',             // url to a single image
         'url' => 'url',                 // url to link to when viewing cart contents
         'price' => 'price',
+        'weight' => 'weight',
         'vat_id' => 'vat_id',           // Must match a valid id from webshop_vats table
     ],
 
