@@ -102,17 +102,23 @@ class Webshop
             $html .= '</tr>';
         }
         // $html .= '<tr>';
-        // $html .= '<td colspan="3">' . trans('webshop::cart.subtotal') . '</td>';
+        // $html .= '<td class="webshop-cart-title">' . trans('webshop::cart.subtotal') . '</td>';
+        // $html .= '<td class="webshop-cart-price"></td>';
+        // $html .= '<td class="webshop-cart-quantity"></td>';
         // $html .= '<td class="webshop-cart-total">' . self::money($amount) . '</td>';
         // $html .= '</tr>';
         // $html .= '<tr>';
-        // $html .= '<td colspan="3">' . trans('webshop::cart.weight') . '</td>';
+        // $html .= '<td class="webshop-cart-title">' . trans('webshop::cart.weight') . '</td>';
+        // $html .= '<td class="webshop-cart-price"></td>';
+        // $html .= '<td class="webshop-cart-quantity"></td>';
         // $html .= '<td class="webshop-cart-total">' . self::money($weight, ' ') . ' kg</td>';
         // $html .= '</tr>';
         $shipping_rate = ShippingRate::valid($amount, $weight, self::old('land', Webshop::geoCountry()))->first();
         $html .= '<tr>';
         if ($shipping_rate) {
-            $html .= '<td colspan="3">' . $shipping_rate->title . '</td>';
+            $html .= '<td class="webshop-cart-title">' . $shipping_rate->title . '</td>';
+            $html .= '<td class="webshop-cart-price"></td>';
+            $html .= '<td class="webshop-cart-quantity"></td>';
             $html .= '<td class="webshop-cart-total">' . self::money($shipping_rate->rate) . '</td>';
         } else {
             $validOrder = false;
@@ -120,7 +126,9 @@ class Webshop
         }
         $html .= '</tr>';
         $html .= '<tr>';
-        $html .= '<td colspan="3">' . trans('webshop::cart.total_to_pay') . '</td>';
+        $html .= '<td class="webshop-cart-title">' . trans('webshop::cart.total_to_pay') . '</td>';
+        $html .= '<td class="webshop-cart-price"></td>';
+        $html .= '<td class="webshop-cart-quantity"></td>';
         $html .= '<td class="webshop-cart-total">' . self::money($amount + $shipping_rate->rate) . '</td>';
         $html .= '</tr>';
         $html .= '</table>';
