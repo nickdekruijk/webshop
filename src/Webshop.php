@@ -70,13 +70,13 @@ class Webshop
         return $countries;
     }
 
-    public function old($key, $default = null)
+    public static function old($key, $default = null)
     {
         return session(config('webshop.table_prefix') . 'form.' . $key, $default);
     }
 
     // Return HTML table with the cart contents
-    public function showCart($submitButton)
+    public static function showCart($submitButton, $order = false)
     {
         $validOrder = false;
         $html = '';
