@@ -75,4 +75,13 @@ return [
 
     'routes_prefix' => 'webshop',
 
+    'checkout_validate' => [
+        'name' => 'required',
+        'address' => 'required',
+        'zipcode' => 'required',
+        'city' => 'required',
+        'country' => 'required',
+        'email' => 'email:rfc,dns,spoof,filter,strict|required',
+    ],
+
 ];
