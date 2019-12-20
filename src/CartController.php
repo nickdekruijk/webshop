@@ -8,6 +8,8 @@ use Session;
 use Illuminate\Http\Request;
 use NickDeKruijk\Webshop\Model\Cart;
 use NickDeKruijk\Webshop\Model\CartItem;
+use NickDeKruijk\Webshop\Model\Order;
+use Mollie\Laravel\Facades\Mollie;
 
 class CartController extends Controller
 {
@@ -110,17 +112,92 @@ class CartController extends Controller
     }
 
     // Return all cart content
-    public static function getItems()
+    public static function getItems($compact = false)
     {
         $cart = self::getCurrent();
         if (!$cart) {
             return [];
         }
-        return $cart->items()->with('product')->get();
+        if ($compact) {
+            $items = [];
+            $amount = 0;
+            foreach ($cart->items()->with('product')->where('quantity', '!=', 0)->get() as $item) {
+                $items[] = [
+                    'id' => $item->product[config('webshop.product_columns.id')],
+                    'title' => $item->product[config('webshop.product_columns.title')],
+                    'price' => $item->product[config('webshop.product_columns.price')],
+                    'quantity' => +$item->quantity,
+                ];
+                $amount += $item->product[config('webshop.product_columns.price')] * $item->quantity;
+            }
+            return [
+                'items' => $items,
+                'amount' => $amount,
+            ];
+        } else {
+            return $cart->items()->with('product')->get();
+        }
+    }
+
+    public function verifyPayment(Request $request)
+    {
+        $order = Order::findOrFail(session(config('webshop.table_prefix') . 'order_id'));
+        $payment = Mollie::api()->payments()->get($order->payment_id);
+        if ($payment->isPaid()) {
+            $order->paid = true;
+            $order->save();
+            return redirect('webshop/bedankt');
+        } else {
+            return redirect()->route('webshop-cart-show')->with(['payment_error' => trans('webshop::cart.payment_' . $payment->status)]);
+        }
+    }
+
+    public function webhookMollie(Request $request)
+    {
+        abort_if(!$request->id, 404);
+        $order = Order::where('payment_id', $request->id)->firstOrFail();
+        $payment = Mollie::api()->payments()->get($request->id);
+        if ($payment->isPaid()) {
+            $order->paid = true;
+            $order->save();
+        }
     }
 
     public function post(Request $request)
     {
+        Session::put(config('webshop.table_prefix') . 'form', $request->toArray());
+        if ($request->webshop_submit == 'checkout') {
+            $request->validate(config('webshop.checkout_validate'), trans('webshop::cart.checkout_validate_messages'));
+            if (session(config('webshop.table_prefix') . 'order_id')) {
+                $order = Order::findOrNew(session(config('webshop.table_prefix') . 'order_id'));
+            } else {
+                $order = new Order();
+            }
+            $customer = $request->except(['_token', 'webshop_submit']);
+            foreach ($customer as $key => $value) {
+                if (substr($key, 0, 9) == 'quantity_') {
+                    unset($customer[$key]);
+                }
+            }
+            $order->customer = $customer;
+            $order->html = Webshop::showCart('', true);
+            $order->products = self::getItems(true)['items'];
+            $order->amount = self::getItems(true)['amount'];
+            $order->save();
+            $payment = Mollie::api()->payments()->create([
+                'amount' => [
+                    'currency' => 'EUR',
+                    'value' => $order->amount,
+                ],
+                'description' => 'Webshop order ' . $order->id,
+                'webhookUrl' => app()->environment() == 'local' ? null : route('webshop-webhook-mollie'),
+                'redirectUrl' => route('webshop-checkout-verify'),
+            ]);
+            $order->payment_id = $payment->id;
+            $order->save();
+            Session::put(config('webshop.table_prefix') . 'order_id', $order->id);
+            return redirect($payment->getCheckoutUrl(), 303);
+        }
         foreach (self::getCurrent()->items as $item) {
             if ($request['quantity_' . $item->id] != $item->quantity) {
                 if ($request['quantity_' . $item->id]) {
@@ -131,7 +208,6 @@ class CartController extends Controller
                 $item->save();
             }
         }
-        Session::put(config('webshop.table_prefix') . 'form', $request->toArray());
         return back();
     }
 }
