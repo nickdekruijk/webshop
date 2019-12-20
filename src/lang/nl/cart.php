@@ -11,4 +11,9 @@ return [
     'weight' => 'Gewicht',
     'total_to_pay' => 'Af te rekenen bedrag',
     'no-shipping-possible' => 'Geen verzending mogelijk',
+    'payment_canceled' => 'Betaling geannuleerd, probeerd het nog eens.',
+    'checkout_validate_messages' => [
+        'zipcode.required' => 'Postcode is verplicht.',
+        'city.required' => 'Plaats is verplicht.',
+    ],
 ];
