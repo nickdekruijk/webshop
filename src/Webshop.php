@@ -113,7 +113,8 @@ class Webshop
         // $html .= '<td class="webshop-cart-quantity"></td>';
         // $html .= '<td class="webshop-cart-total">' . self::money($weight, ' ') . ' kg</td>';
         // $html .= '</tr>';
-        $shipping_rate = ShippingRate::valid($amount, $weight, self::old('land', Webshop::geoCountry()))->first();
+
+        $shipping_rate = ShippingRate::valid($amount, $weight, self::old('country', Webshop::geoCountry()))->first();
         $html .= '<tr>';
         if ($shipping_rate) {
             $html .= '<td class="webshop-cart-title">' . $shipping_rate->title . '</td>';
