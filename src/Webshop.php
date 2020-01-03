@@ -126,12 +126,14 @@ class Webshop
             $html .= '<td colspan="4">' . trans('webshop::cart.no-shipping-possible') . '</td>';
         }
         $html .= '</tr>';
-        $html .= '<tr>';
-        $html .= '<td class="webshop-cart-title">' . trans('webshop::cart.total_to_pay') . '</td>';
-        $html .= '<td class="webshop-cart-price"></td>';
-        $html .= '<td class="webshop-cart-quantity"></td>';
-        $html .= '<td class="webshop-cart-total">' . self::money($amount + $shipping_rate->rate) . '</td>';
-        $html .= '</tr>';
+        if ($validOrder) {
+            $html .= '<tr>';
+            $html .= '<td class="webshop-cart-title">' . trans('webshop::cart.total_to_pay') . '</td>';
+            $html .= '<td class="webshop-cart-price"></td>';
+            $html .= '<td class="webshop-cart-quantity"></td>';
+            $html .= '<td class="webshop-cart-total">' . self::money($amount + $shipping_rate->rate) . '</td>';
+            $html .= '</tr>';
+        }
         $html .= '</table>';
         if ($validOrder) {
             $html .= $submitButton;
