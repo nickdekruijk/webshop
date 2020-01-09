@@ -7,6 +7,7 @@ use NickDeKruijk\Webshop\Model\ShippingRate;
 use Cache;
 use File;
 use GeoIp2\Database\Reader;
+use Session;
 
 class Webshop
 {
@@ -79,7 +80,7 @@ class Webshop
     }
 
     // Return HTML table with the cart contents
-    public static function showCart($submitButton, $order = false)
+    public static function showCart()
     {
         $validOrder = false;
         $html = '';
@@ -138,9 +139,14 @@ class Webshop
             $html .= '</tr>';
         }
         $html .= '</table>';
-        if ($validOrder) {
-            $html .= $submitButton;
-        }
+        Session::put(config('webshop.table_prefix') . 'validOrder', $validOrder);
         return $html;
+    }
+
+
+    // Must be called after showCart so validOrder session will be set
+    public static function validOrder()
+    {
+        return Session::get(config('webshop.table_prefix') . 'validOrder');
     }
 }
