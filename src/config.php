@@ -75,6 +75,10 @@ return [
 
     'routes_prefix' => 'webshop',
 
+    'payment_methods' => [
+        'mollie',
+    ],
+
     'checkout_validate' => [
         'webshop-shipping' => 'required',
         'name' => 'required',
@@ -83,6 +87,35 @@ return [
         'city' => 'required',
         'country' => 'required',
         'email' => 'email:rfc,dns,spoof,filter,strict|required',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | cookie (not implemented yet)
+    |--------------------------------------------------------------------------
+    |
+    | By default the cart_id will be store in the session. So when the users
+    | session expires the cart will be empty. To keep the cart longer we can
+    | use a dedicated cookie with longer lifetime to store the cart_id
+    |
+    | Defaults:
+    | name = "app_name_cart"
+    | lifetime = 1 year
+    | path = / (root)
+    | domain = null
+    | secure = true
+    | http_only = true
+    |
+    */
+
+    'cookie' => [
+        'enabled' => false,
+        'name' => Str::slug(env('APP_NAME', 'laravel'), '_') . '_cart',
+        'lifetime' => 60 * 24 * 365,
+        'path' => '/',
+        'domain' => null,
+        'secure' => true,
+        'http_only' => true,
     ],
 
 ];
