@@ -57,9 +57,7 @@ class Webshop
     public static function countries($translation = null)
     {
         $countryFile = storage_path() . '/../vendor/mledoze/countries/countries.json';
-        if (!File::exists($countryFile)) {
-            dd('Country file (' . $countryFile . ') not found, is mledoze/countries package loaded?');
-        }
+        abort_if(!File::exists($countryFile), 500, 'Country file not found, is mledoze/countries package loaded?');
         $countries = [];
         foreach (json_decode(File::get($countryFile)) as $country) {
             if ($translation) {
