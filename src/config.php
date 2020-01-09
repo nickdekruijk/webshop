@@ -76,6 +76,7 @@ return [
     'routes_prefix' => 'webshop',
 
     'checkout_validate' => [
+        'webshop-shipping' => 'required',
         'name' => 'required',
         'address' => 'required',
         'zipcode' => 'required',
