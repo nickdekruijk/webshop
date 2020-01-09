@@ -118,13 +118,31 @@ class Webshop
         // $html .= '<td class="webshop-cart-total">' . self::money($weight, ' ') . ' kg</td>';
         // $html .= '</tr>';
 
-        $shipping_rate = ShippingRate::valid($amount, $weight, self::old('country', Webshop::geoCountry()))->first();
+        $shipping_rates = ShippingRate::valid($amount, $weight, self::old('country', Webshop::geoCountry()))->get();
         $html .= '<tr>';
-        if ($shipping_rate) {
+        if ($shipping_rates->count() == 1) {
+            $shipping_rate = $shipping_rates->first();
+            $html .= '<input type="hidden" name="webshop-shipping" value="' . $shipping_rate->id . '">';
             $html .= '<td class="webshop-cart-title">' . $shipping_rate->title . '</td>';
             $html .= '<td class="webshop-cart-price"></td>';
             $html .= '<td class="webshop-cart-quantity"></td>';
             $html .= '<td class="webshop-cart-total">' . self::money($shipping_rate->rate) . '</td>';
+        } elseif ($shipping_rates->count() > 1) {
+            $html .= '<td colspan="3">';
+            $html .= '<div class="select webshop-shipping"><select name="webshop-shipping" onchange="this.form.submit()">';
+            $html .= '<option value="">' . trans('webshop::cart.select-shipping') . '</option>';
+            foreach ($shipping_rates as $rate) {
+                if (self::old('webshop-shipping') == $rate->id) {
+                    $shipping_rate = $rate;
+                }
+                $html .= '<option value="' . $rate->id . '"' . (self::old('webshop-shipping') == $rate->id ? ' selected' : '') . '>' . $rate->title . '</option>';
+            }
+            if (empty($shipping_rate)) {
+                $validOrder = false;
+            }
+            $html .= '</select></div>';
+            $html .= '</td>';
+            $html .= '<td class="webshop-cart-total">' . (isset($shipping_rate) ? self::money($shipping_rate->rate) : '') . '</td>';
         } else {
             $validOrder = false;
             $html .= '<td colspan="4">' . trans('webshop::cart.no-shipping-possible') . '</td>';
