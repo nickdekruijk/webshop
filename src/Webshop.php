@@ -93,17 +93,20 @@ class Webshop
         $html .= '</tr>';
         $weight = 0;
         $amount = 0;
-        foreach (CartController::getItems()->where('quantity', '>', 0) as $item) {
-            $validOrder = true;
-            $weight += $item->quantity * $item->product[config('webshop.product_columns.weight')];
-            $amount += $item->quantity * $item->product[config('webshop.product_columns.price')];
-            $html .= '<tr class="webshop-cart-quantity-' . +$item->quantity . '">';
-            $html .= '<td><div class="webshop-cart-title">' . $item->product[config('webshop.product_columns.title')] . '</div><div class="webshop-cart-description">' . $item->product[config('webshop.product_columns.description')] . '</div></td>';
-            $html .= '<td class="webshop-cart-price">' . self::money($item->product[config('webshop.product_columns.price')]) . '</td>';
-            // $html .= '<td class="webshop-cart-quantity"><a href="" class="webshop-cart-minus"></a><span>' . +$item->quantity . '</span><a href="" class="webshop-cart-plus"></a></td>';
-            $html .= '<td class="webshop-cart-quantity"><input onchange="this.form.submit()" type="number" name="quantity_' . $item['id'] . '" min="0" value="' . +$item->quantity . '"></td>';
-            $html .= '<td class="webshop-cart-total">' . self::money($item->quantity * $item->product[config('webshop.product_columns.price')]) . '</td>';
-            $html .= '</tr>';
+        $items = CartController::getItems();
+        if ($items) {
+            foreach ($items->where('quantity', '>', 0) as $item) {
+                $validOrder = true;
+                $weight += $item->quantity * $item->product[config('webshop.product_columns.weight')];
+                $amount += $item->quantity * $item->product[config('webshop.product_columns.price')];
+                $html .= '<tr class="webshop-cart-quantity-' . +$item->quantity . '">';
+                $html .= '<td><div class="webshop-cart-title">' . $item->product[config('webshop.product_columns.title')] . '</div><div class="webshop-cart-description">' . $item->product[config('webshop.product_columns.description')] . '</div></td>';
+                $html .= '<td class="webshop-cart-price">' . self::money($item->product[config('webshop.product_columns.price')]) . '</td>';
+                // $html .= '<td class="webshop-cart-quantity"><a href="" class="webshop-cart-minus"></a><span>' . +$item->quantity . '</span><a href="" class="webshop-cart-plus"></a></td>';
+                $html .= '<td class="webshop-cart-quantity"><input onchange="this.form.submit()" type="number" name="quantity_' . $item['id'] . '" min="0" value="' . +$item->quantity . '"></td>';
+                $html .= '<td class="webshop-cart-total">' . self::money($item->quantity * $item->product[config('webshop.product_columns.price')]) . '</td>';
+                $html .= '</tr>';
+            }
         }
         // $html .= '<tr>';
         // $html .= '<td class="webshop-cart-title">' . trans('webshop::cart.subtotal') . '</td>';
