@@ -146,7 +146,7 @@ class CartController extends Controller
         if ($payment->isPaid()) {
             $order->paid = true;
             $order->save();
-            return redirect('webshop/bedankt');
+            return redirect(config('webshop.checkout_redirect_paid'));
         } else {
             return redirect()->route('webshop-cart-show')->with(['payment_error' => trans('webshop::cart.payment_' . $payment->status)]);
         }
