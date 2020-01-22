@@ -13,5 +13,6 @@ return [
     'no-shipping-possible' => 'No shipping possible',
     'select-shipping' => 'Select shipping',
     'payment_canceled' => 'Payment canceled, try again.',
+    'payment_failed' => 'Payment failed, try again.',
     'checkout_validate_messages' => [],
 ];

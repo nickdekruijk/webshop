@@ -13,6 +13,7 @@ return [
     'no-shipping-possible' => 'Geen verzending mogelijk',
     'select-shipping' => 'Selecteer verzendmethode',
     'payment_canceled' => 'Betaling geannuleerd, probeerd het nog eens.',
+    'payment_failed' => 'Betaling mislukt, probeerd het nog eens.',
     'checkout_validate_messages' => [
         'zipcode.required' => 'Postcode is verplicht.',
         'city.required' => 'Plaats is verplicht.',
