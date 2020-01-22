@@ -117,7 +117,14 @@ class CartController extends Controller
         // Save it
         $cart_item->save();
 
-        return back()->with(['webshopStatus' => 'addedtocart']);
+        if (request()->ajax()) {
+            return [
+                'subtotal' => self::getItems(),
+                'count' => +$cart_item->quantity,
+            ];
+        } else {
+            return back()->with(['webshopStatus' => 'addedtocart']);
+        }
     }
 
     // Return all cart content
