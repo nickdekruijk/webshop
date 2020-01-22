@@ -5,6 +5,7 @@ namespace NickDeKruijk\Webshop;
 use App\Http\Controllers\Controller;
 use Auth;
 use Session;
+use Mail;
 use Illuminate\Http\Request;
 use NickDeKruijk\Webshop\Model\Cart;
 use NickDeKruijk\Webshop\Model\CartItem;
@@ -160,6 +161,17 @@ class CartController extends Controller
         $order = Order::findOrFail(session(config('webshop.table_prefix') . 'order_id'));
         $payment = Mollie::api()->payments()->get($order->payment_id);
         if ($payment->isPaid()) {
+            if (!$order->paid) {
+                // Send notifications
+                $mailables = config('webshop.mailables_paid');
+                if (!is_array($mailables)) {
+                    $mailables = [$mailables];
+                }
+                foreach ($mailables as $mailable) {
+                    return new $mailable($order);
+                    Mail::to($order->customer['email'])->bcc('bestelling@taart-utrecht.nl')->send(new $mailable($order));
+                }
+            }
             $order->paid = true;
             $order->save();
             Session::put(config('webshop.table_prefix') . 'order_id', null);
