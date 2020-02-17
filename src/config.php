@@ -81,12 +81,13 @@ return [
 
     'checkout_validate' => [
         'webshop-shipping' => 'required',
+        'email' => 'required|email:rfc,dns,spoof,filter,strict',
         'name' => 'required',
         'address' => 'required',
         'zipcode' => 'required',
         'city' => 'required',
         'country' => 'required',
-        'email' => 'required|email:rfc,dns,spoof,filter,strict',
+        'terms' => 'required',
     ],
 
     /*
