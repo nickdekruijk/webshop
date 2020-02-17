@@ -23,6 +23,7 @@ return [
         'password_create.confirmed' => 'Wachtwoord bevestiging komt niet overeen.',
         'password_create.min' => 'Wachtwoord moet minimaal :min tekens zijn.',
         'password_create.regex' => 'Wachtwoord moet cijfers, hoofd- en kleineletters bevatten.',
-        'password.required_with' => 'Wachtwoord is verplicht als je een account wilt aanmaken.'
+        'password.required_with' => 'Wachtwoord is verplicht als je een account wilt aanmaken.',
+        'password_login.invalid' => 'Wachtwoord en/of e-mailadres is ongeldig.',
     ],
 ];
