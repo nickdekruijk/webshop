@@ -213,7 +213,7 @@ class CartController extends Controller
     public function post(Request $request)
     {
         Session::put(config('webshop.table_prefix') . 'form', $request->toArray());
-        if ($request->webshop_submit == 'login') {
+        if ($request->account == 'login') {
             return $this->login($request);
         }
         if ($request->webshop_submit == 'logout') {
@@ -221,9 +221,6 @@ class CartController extends Controller
         }
         if ($request->webshop_submit == 'checkout') {
             $validate = config('webshop.checkout_validate');
-            if ($request->account == 'login') {
-                return $this->login($request);
-            }
             if ($request->account == 'create') {
                 $validate['email'] = array_merge(is_array($validate['email']) ? $validate['email'] : explode('|', $validate['email']), [
                     'unique:App\User,email',
