@@ -79,13 +79,13 @@ class Webshop
     }
 
     // Return HTML table with the cart contents
-    public static function showCart($order = false)
+    public static function showCart($order = false, $showId = false)
     {
         $validOrder = false;
         $html = '';
         $html .= '<table class="webshop-cart-table">';
         $html .= '<tr>';
-        if ($order) {
+        if ($showId) {
             $html .= '<th class="webshop-cart-id">' . trans('webshop::cart.product_id') . '</th>';
         }
         $html .= '<th class="webshop-cart-title">' . trans('webshop::cart.product') . '</th>';
@@ -102,7 +102,7 @@ class Webshop
                 $weight += $item->quantity * $item->product[config('webshop.product_columns.weight')];
                 $amount += $item->quantity * $item->product[config('webshop.product_columns.price')];
                 $html .= '<tr class="webshop-cart-quantity-' . +$item->quantity . '">';
-                if ($order) {
+                if ($showId) {
                     $html .= '<td><div class="webshop-cart-id">' . $item->id . '</td>';
                 }
                 $html .= '<td><div class="webshop-cart-title">' . $item->product[config('webshop.product_columns.title')] . '</div><div class="webshop-cart-description">' . $item->product[config('webshop.product_columns.description')] . '</div></td>';
@@ -135,7 +135,9 @@ class Webshop
         if ($shipping_rates->count() == 1 || $order) {
             if ($order) {
                 $shipping_rate = $shipping_rates->find(self::old('webshop-shipping'));
-                $html .= '<td><div class="webshop-cart-id">' . $shipping_rate->id . '</td>';
+                if ($showId) {
+                    $html .= '<td><div class="webshop-cart-id">' . $shipping_rate->id . '</td>';
+                }
             } else {
                 $shipping_rate = $shipping_rates->first();
                 $html .= '<input type="hidden" name="webshop-shipping" value="' . $shipping_rate->id . '">';
@@ -167,7 +169,7 @@ class Webshop
         $html .= '</tr>';
         if ($validOrder) {
             $html .= '<tr>';
-            if ($order) {
+            if ($showId) {
                 $html .= '<td><div class="webshop-cart-id"></td>';
             }
             $html .= '<td class="webshop-cart-title">' . trans('webshop::cart.total_to_pay') . '</td>';
