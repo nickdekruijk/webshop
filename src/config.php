@@ -86,7 +86,7 @@ return [
         'zipcode' => 'required',
         'city' => 'required',
         'country' => 'required',
-        'email' => 'email:rfc,dns,spoof,filter,strict|required',
+        'email' => 'required|email:rfc,dns,spoof,filter,strict',
     ],
 
     /*
