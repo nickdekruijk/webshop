@@ -196,7 +196,20 @@ class CartController extends Controller
     {
         Session::put(config('webshop.table_prefix') . 'form', $request->toArray());
         if ($request->webshop_submit == 'checkout') {
-            $request->validate(config('webshop.checkout_validate'), trans('webshop::cart.checkout_validate_messages'));
+            $validate = config('webshop.checkout_validate');
+            if ($request->account == 'create') {
+                $validate['email'] = array_merge(is_array($validate['email']) ? $validate['email'] : explode('|', $validate['email']), [
+                    'unique:App\User,email',
+                ]);
+                $validate['password_create'] = [
+                    'required',
+                    'confirmed',
+                    'min:8',
+                    'unique:App\User,email',
+                    'regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])/',
+                ];
+            }
+            $request->validate($validate, trans('webshop::cart.checkout_validate_messages'));
             if (session(config('webshop.table_prefix') . 'order_id')) {
                 $order = Order::findOrNew(session(config('webshop.table_prefix') . 'order_id'));
             } else {
