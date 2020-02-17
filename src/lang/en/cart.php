@@ -5,6 +5,7 @@ return [
     'quantity' => 'Quantity',
     'total' => 'Total',
     'product' => 'Product',
+    'product_id' => 'ID',
     'dec_point' => '.',
     'thousands_sep' => ',',
     'subtotal' => 'Subtotal',
