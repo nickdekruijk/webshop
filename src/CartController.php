@@ -244,7 +244,7 @@ class CartController extends Controller
 
                 // Add unique rule for email
                 $validate['email'] = array_merge(is_array($validate['email']) ? $validate['email'] : explode('|', $validate['email']), [
-                    'unique:App\User,email',
+                    'unique:' . config('webshop.user_model') . ',email',
                 ]);
 
                 // Password requirements
