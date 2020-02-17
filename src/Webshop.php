@@ -2,7 +2,6 @@
 
 namespace NickDeKruijk\Webshop;
 
-use NickDeKruijk\Webshop\Model\Cart;
 use NickDeKruijk\Webshop\Model\ShippingRate;
 use Cache;
 use File;
