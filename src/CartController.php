@@ -140,7 +140,7 @@ class CartController extends Controller
             $amount = 0;
             foreach ($cart->items()->with('product')->where('quantity', '!=', 0)->get() as $item) {
                 $items[] = [
-                    'id' => $item->product[config('webshop.product_columns.id')],
+                    'id' => $item->product[config('webshop.product_columns.product_id')],
                     'title' => $item->product[config('webshop.product_columns.title')],
                     'price' => $item->product[config('webshop.product_columns.price')],
                     'quantity' => +$item->quantity,
