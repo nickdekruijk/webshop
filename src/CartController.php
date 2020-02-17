@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use NickDeKruijk\Webshop\Model\Cart;
 use NickDeKruijk\Webshop\Model\CartItem;
 use NickDeKruijk\Webshop\Model\Order;
+use NickDeKruijk\Webshop\Model\ShippingRate;
 use Mollie\Laravel\Facades\Mollie;
 
 class CartController extends Controller
@@ -147,8 +148,15 @@ class CartController extends Controller
                 ];
                 $amount += $item->product[config('webshop.product_columns.price')] * $item->quantity;
             }
+            $shipping_rate = ShippingRate::find(Webshop::old('webshop-shipping'));
+            $amount += $shipping_rate->rate;
             return [
                 'items' => $items,
+                'shipping' => [
+                    'id' => $shipping_rate->id,
+                    'title' => $shipping_rate->title,
+                    'rate' => $shipping_rate->rate,
+                ],
                 'amount' => $amount,
             ];
         } else {
