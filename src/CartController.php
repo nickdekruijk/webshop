@@ -220,19 +220,34 @@ class CartController extends Controller
 
     public function post(Request $request)
     {
+        // Store all form values for Webshop::old()
         Session::put(config('webshop.table_prefix') . 'form', $request->toArray());
+
+        // Try to login when user selected login
         if ($request->account == 'login') {
             return $this->login($request);
         }
+
+        // Logout the user if they pressed the button
         if ($request->webshop_submit == 'logout') {
             return $this->logout($request);
         }
+
+        // Validate everything and handle checkout if user pressed checkout button
         if ($request->webshop_submit == 'checkout') {
+
+            // Get default validation rules from config
             $validate = config('webshop.checkout_validate');
+
+            // When a new account is created additional rules are needed
             if ($request->account == 'create') {
+
+                // Add unique rule for email
                 $validate['email'] = array_merge(is_array($validate['email']) ? $validate['email'] : explode('|', $validate['email']), [
                     'unique:App\User,email',
                 ]);
+
+                // Password requirements
                 $validate['password_create'] = [
                     'required',
                     'confirmed',
@@ -241,16 +256,26 @@ class CartController extends Controller
                     'regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])/',
                 ];
             }
+
+            // Don't validate email if user is logged in
             if (!$request->account && Auth::check()) {
                 unset($validate['email']);
             }
+
+            // Run the validation
             $request->validate($validate, trans('webshop::cart.checkout_validate_messages'));
+
+            // Get Order from DB/Session or create new
             if (session(config('webshop.table_prefix') . 'order_id')) {
                 $order = Order::findOrNew(session(config('webshop.table_prefix') . 'order_id'));
             } else {
                 $order = new Order();
             }
+
+            // Some form fields we don't wanna store
             $customer = $request->except(['_token', 'webshop_submit', 'password_login', 'password_create', 'password_create_confirmation']);
+
+            // If user is logged in only store specific customer_columns with the User and store the user_id, or set user_id to null when not logged in
             if (Auth::check()) {
                 $order->user_id = Auth::user()->id;
                 $column = config('webshop.table_prefix') . 'customer';
@@ -260,17 +285,23 @@ class CartController extends Controller
             } else {
                 $order->user_id = null;
             }
+
+            // Delete quantity fields since we don't want to store them either
             foreach ($customer as $key => $value) {
                 if (substr($key, 0, 9) == 'quantity_') {
                     unset($customer[$key]);
                 }
             }
+
+            // Finalize the Order and save it
             $order->customer = $customer;
             $order->html = Webshop::showCart(true);
             $items = self::getItems(true);
             $order->products = $items['items'];
             $order->amount = $items['amount'];
             $order->save();
+
+            // Get mollie payment id and set redirect/webhook urls
             $payment = Mollie::api()->payments()->create([
                 'amount' => [
                     'currency' => 'EUR',
@@ -282,9 +313,15 @@ class CartController extends Controller
             ]);
             $order->payment_id = $payment->id;
             $order->save();
+
+            // Store order id in session
             Session::put(config('webshop.table_prefix') . 'order_id', $order->id);
+
+            // Redirect to Mollie
             return redirect($payment->getCheckoutUrl(), 303);
         }
+
+        // No checkout, just update quantity
         foreach (self::getCurrent()->items as $item) {
             if ($request['quantity_' . $item->id] != $item->quantity) {
                 if ($request['quantity_' . $item->id]) {
