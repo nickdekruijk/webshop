@@ -252,7 +252,6 @@ class CartController extends Controller
                     'required',
                     'confirmed',
                     'min:8',
-                    'unique:App\User,email',
                     'regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])/',
                 ];
             }
