@@ -254,6 +254,9 @@ class CartController extends Controller
             if (Auth::check()) {
                 $order->user_id = Auth::user()->id;
                 $customer['email'] = Auth::user()->email;
+                $column = config('webshop.table_prefix') . 'customer';
+                Auth::user()->$column = $customer;
+                Auth::user()->save();
             }
             foreach ($customer as $key => $value) {
                 if (substr($key, 0, 9) == 'quantity_') {
