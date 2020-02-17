@@ -19,4 +19,9 @@ class Order extends Model
 
         $this->table = config('webshop.table_prefix') . 'orders';
     }
+
+    public function user()
+    {
+        return $this->belongsTo(config('webshop.user_model'));
+    }
 }

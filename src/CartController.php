@@ -243,6 +243,10 @@ class CartController extends Controller
                 $order = new Order();
             }
             $customer = $request->except(['_token', 'webshop_submit']);
+            if (Auth::check()) {
+                $order->user_id = Auth::user()->id;
+                $customer['email'] = Auth::user()->email;
+            }
             foreach ($customer as $key => $value) {
                 if (substr($key, 0, 9) == 'quantity_') {
                     unset($customer[$key]);
