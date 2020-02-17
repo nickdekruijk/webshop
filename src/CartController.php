@@ -192,9 +192,33 @@ class CartController extends Controller
         }
     }
 
+    public function login(Request $request)
+    {
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password_login])) {
+            return back();
+        } else {
+            $errors = [
+                'password_login' => trans('webshop::cart.checkout_validate_messages')['password_login.invalid'],
+            ];
+            return back()->withInput()->withErrors($errors);
+        }
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        return back();
+    }
+
     public function post(Request $request)
     {
         Session::put(config('webshop.table_prefix') . 'form', $request->toArray());
+        if ($request->webshop_submit == 'login') {
+            return $this->login($request);
+        }
+        if ($request->webshop_submit == 'logout') {
+            return $this->logout($request);
+        }
         if ($request->webshop_submit == 'checkout') {
             $validate = config('webshop.checkout_validate');
             if ($request->account == 'create') {
