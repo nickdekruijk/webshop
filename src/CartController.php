@@ -274,6 +274,21 @@ class CartController extends Controller
             // Some form fields we don't wanna store
             $customer = $request->except(['_token', 'webshop_submit', 'password_login', 'password_create', 'password_create_confirmation']);
 
+            // Make an account if user wants to make one and isn't logged in yet
+            if ($request->account == 'create' && Auth::guest()) {
+                $user = config('webshop.user_model');
+                $user = new $user;
+                $user->name = $request->name;
+                $user->email = $request->email;
+                $user->password = bcrypt($request->password_create);
+                $user->save();
+
+                // Attempt to login the newly created user
+                if (!Auth::attempt(['email' => $request->email, 'password' => $request->password_create])) {
+                    abort(500, 'Failed to login new user');
+                }
+            }
+
             // If user is logged in only store specific customer_columns with the User and store the user_id, or set user_id to null when not logged in
             if (Auth::check()) {
                 $order->user_id = Auth::user()->id;
