@@ -253,10 +253,10 @@ class CartController extends Controller
             $customer = $request->except(['_token', 'webshop_submit']);
             if (Auth::check()) {
                 $order->user_id = Auth::user()->id;
-                $customer['email'] = Auth::user()->email;
                 $column = config('webshop.table_prefix') . 'customer';
-                Auth::user()->$column = $customer;
+                Auth::user()->$column = array_intersect_key($customer, array_flip(config('webshop.customer_columns')));
                 Auth::user()->save();
+                $customer['email'] = Auth::user()->email;
             }
             foreach ($customer as $key => $value) {
                 if (substr($key, 0, 9) == 'quantity_') {
