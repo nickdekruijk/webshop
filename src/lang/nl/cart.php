@@ -17,5 +17,7 @@ return [
     'checkout_validate_messages' => [
         'zipcode.required' => 'Postcode is verplicht.',
         'city.required' => 'Plaats is verplicht.',
+        'terms.required' => 'Akkoord gaan is verplicht.',
+        'password.required_with' => 'Wachtwoord is verplicht als je een account wilt aanmaken.'
     ],
 ];

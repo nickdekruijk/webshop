@@ -14,5 +14,8 @@ return [
     'select-shipping' => 'Select shipping',
     'payment_canceled' => 'Payment canceled, try again.',
     'payment_failed' => 'Payment failed, try again.',
-    'checkout_validate_messages' => [],
+    'checkout_validate_messages' => [
+        'terms.required' => 'You need to agree.',
+        'password.required_with' => 'Password is required if you want to create an account.'
+    ],
 ];
