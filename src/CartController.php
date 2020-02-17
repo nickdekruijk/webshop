@@ -177,7 +177,7 @@ class CartController extends Controller
                 }
                 foreach ($mailables as $mailable) {
                     return new $mailable($order);
-                    Mail::to($order->customer['email'])->bcc('bestelling@taart-utrecht.nl')->send(new $mailable($order));
+                    Mail::to($order->customer['email'])->send(new $mailable($order));
                 }
             }
             $order->paid = true;
