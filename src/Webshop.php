@@ -34,7 +34,7 @@ class Webshop
     {
         return CartController::count($unique);
     }
-  
+
     public static function money($amount, $currency = null)
     {
         return ($currency ?: config('webshop.currency', '&euro; ')) . number_format($amount, 2, trans('webshop::cart.dec_point'), trans('webshop::cart.thousands_sep'));
