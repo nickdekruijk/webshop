@@ -262,8 +262,9 @@ class CartController extends Controller
             }
             $order->customer = $customer;
             $order->html = Webshop::showCart(true);
-            $order->products = self::getItems(true)['items'];
-            $order->amount = self::getItems(true)['amount'];
+            $items = self::getItems(true);
+            $order->products = $items['items'];
+            $order->amount = $items['amount'];
             $order->save();
             $payment = Mollie::api()->payments()->create([
                 'amount' => [
