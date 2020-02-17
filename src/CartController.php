@@ -233,6 +233,9 @@ class CartController extends Controller
                     'regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])/',
                 ];
             }
+            if (!$request->account && Auth::check()) {
+                unset($validate['email']);
+            }
             $request->validate($validate, trans('webshop::cart.checkout_validate_messages'));
             if (session(config('webshop.table_prefix') . 'order_id')) {
                 $order = Order::findOrNew(session(config('webshop.table_prefix') . 'order_id'));
