@@ -79,6 +79,15 @@ return [
         'mollie',
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | checkout_validate
+    |--------------------------------------------------------------------------
+    |
+    | Validation rules to use when using checkout
+    |
+    */
+
     'checkout_validate' => [
         'webshop-shipping' => 'required',
         'email' => 'required|email:rfc,dns,spoof,filter,strict',
