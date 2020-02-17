@@ -42,7 +42,7 @@ return [
         'product_id' => 'id',
         'title' => 'name',
         'description' => 'description',
-//         'image' => 'image',             // url to a single image
+        // 'image' => 'image',             // url to a single image
         'url' => 'url',                 // url to link to when viewing cart contents
         'price' => 'price',
         'weight' => 'weight',
