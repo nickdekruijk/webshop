@@ -250,7 +250,7 @@ class CartController extends Controller
             } else {
                 $order = new Order();
             }
-            $customer = $request->except(['_token', 'webshop_submit']);
+            $customer = $request->except(['_token', 'webshop_submit', 'password_login', 'password_create', 'password_create_confirmation']);
             if (Auth::check()) {
                 $order->user_id = Auth::user()->id;
                 $column = config('webshop.table_prefix') . 'customer';
