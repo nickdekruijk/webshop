@@ -321,14 +321,16 @@ class CartController extends Controller
         }
 
         // No checkout, just update quantity
-        foreach (self::getCurrent()->items as $item) {
-            if ($request['quantity_' . $item->id] != $item->quantity) {
-                if ($request['quantity_' . $item->id]) {
-                    $item->quantity = $request['quantity_' . $item->id];
-                } else {
-                    $item->quantity = 0;
+        if (self::getCurrent()) {
+            foreach (self::getCurrent()->items as $item) {
+                if ($request['quantity_' . $item->id] != $item->quantity) {
+                    if ($request['quantity_' . $item->id]) {
+                        $item->quantity = $request['quantity_' . $item->id];
+                    } else {
+                        $item->quantity = 0;
+                    }
+                    $item->save();
                 }
-                $item->save();
             }
         }
         return back();
