@@ -48,7 +48,7 @@ class Webshop
         if ($get = Cache::get('geoip_' . $ip)) {
             return $get;
         }
-        $reader = new Reader(storage_path() . '/../vendor/bobey/geoip2-geolite2-composer/GeoIP2/GeoLite2-City.mmdb');
+        $reader = new Reader(base_path('vendor') . '/bobey/geoip2-geolite2-composer/GeoIP2/GeoLite2-City.mmdb');
         $record = $reader->city($ip);
         Cache::put('geoip_' . $ip, $record->country->isoCode, 3600);
         return $record->country->isoCode;
@@ -56,7 +56,7 @@ class Webshop
 
     public static function countries($translation = null)
     {
-        $countryFile = storage_path() . '/../vendor/mledoze/countries/countries.json';
+        $countryFile = base_path('vendor') . '/mledoze/countries/countries.json';
         abort_if(!File::exists($countryFile), 500, 'Country file not found, is mledoze/countries package loaded?');
         $countries = [];
         foreach (json_decode(File::get($countryFile)) as $country) {
