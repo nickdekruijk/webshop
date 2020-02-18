@@ -32,8 +32,7 @@ return [
     | product_model
     |--------------------------------------------------------------------------
     |
-    | Allow users to login and see their order status and save cart contents
-    | Set to null to not allow users to login
+    | Use this model for product details
     |
     */
 
