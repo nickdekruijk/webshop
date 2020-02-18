@@ -100,7 +100,7 @@ class Webshop
                 $amount += $item->quantity * $item->price;
                 $html .= '<tr class="webshop-cart-quantity-' . +$item->quantity . '">';
                 if ($showId) {
-                    $html .= '<td><div class="webshop-cart-id">' . $item->id . '</td>';
+                    $html .= '<td><div class="webshop-cart-id">' . $item->product_id . '</td>';
                 }
                 $html .= '<td><div class="webshop-cart-title">' . $item->title . '</div>';
                 $html .= '</td>';
