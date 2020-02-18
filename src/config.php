@@ -62,6 +62,38 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | product_option_model
+    |--------------------------------------------------------------------------
+    |
+    | Use this model for product options
+    |
+    */
+
+    'product_option_model' => 'App\ProductOption',
+
+    /*
+    |--------------------------------------------------------------------------
+    | product_option_columns
+    |--------------------------------------------------------------------------
+    |
+    | Use these Product Option model attributes for checkout. Make sure your
+    | ProductOption model (above) returns these columns/attributes.
+    | Required: id, title, price
+    |
+    */
+
+    'product_option_columns' => [
+        'option_id' => 'id',
+        'title' => 'title',
+        'description' => 'description',
+        'url' => 'url',
+        'price' => 'price',
+        'weight' => 'weight',
+        'vat_id' => 'vat_id',           // Must match a valid id from webshop_vats table
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | table_prefix
     |--------------------------------------------------------------------------
     |
