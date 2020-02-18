@@ -158,7 +158,7 @@ class Webshop
                 if (self::old('webshop-shipping') == $rate->id) {
                     $shipping_rate = $rate;
                 }
-                $html .= '<option value="' . $rate->id . '"' . (self::old('webshop-shipping') == $rate->id ? ' selected' : '') . '>' . $rate->title . '</option>';
+                $html .= '<option value="' . $rate->id . '"' . (self::old('webshop-shipping') == $rate->id ? ' selected' : '') . '>' . $rate->title . ($rate->rate > 0 && !$order ? ' ' . self::money($rate->rate) : '') . '</option>';
             }
             if (empty($shipping_rate)) {
                 $validOrder = false;
