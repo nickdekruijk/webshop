@@ -16,6 +16,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | user_model
+    |--------------------------------------------------------------------------
+    |
+    | Allow users to login and see their order status and save cart contents
+    | Set to null to not allow users to login
+    |
+    */
+
+    'order_model' => 'NickDeKruijk\Webshop\Model\Order',
+
+    /*
+    |--------------------------------------------------------------------------
     | product_model
     |--------------------------------------------------------------------------
     |

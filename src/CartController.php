@@ -9,7 +9,6 @@ use Mail;
 use Illuminate\Http\Request;
 use NickDeKruijk\Webshop\Model\Cart;
 use NickDeKruijk\Webshop\Model\CartItem;
-use NickDeKruijk\Webshop\Model\Order;
 use NickDeKruijk\Webshop\Model\ShippingRate;
 use Mollie\Laravel\Facades\Mollie;
 
@@ -164,9 +163,15 @@ class CartController extends Controller
         }
     }
 
+    private static function getOrderModel()
+    {
+        $model = config('webshop.order_model');
+        return new $model;
+    }
+
     public function verifyPayment(Request $request)
     {
-        $order = Order::findOrFail(session(config('webshop.table_prefix') . 'order_id'));
+        $order = $this->getOrderModel()::findOrFail(session(config('webshop.table_prefix') . 'order_id'));
         $payment = Mollie::api()->payments()->get($order->payment_id);
         if ($payment->isPaid()) {
             if (!$order->paid) {
@@ -176,6 +181,7 @@ class CartController extends Controller
                     $mailables = [$mailables];
                 }
                 foreach ($mailables as $mailable) {
+                    // dd($order->pickup);
                     return new $mailable($order);
                     Mail::to($order->customer['email'])->send(new $mailable($order));
                 }
@@ -192,7 +198,7 @@ class CartController extends Controller
     public function webhookMollie(Request $request)
     {
         abort_if(!$request->id, 404);
-        $order = Order::where('payment_id', $request->id)->firstOrFail();
+        $order = $this->getOrderModel()::where('payment_id', $request->id)->firstOrFail();
         $payment = Mollie::api()->payments()->get($request->id);
         if ($payment->isPaid()) {
             $order->paid = true;
@@ -272,9 +278,9 @@ class CartController extends Controller
 
             // Get Order from DB/Session or create new
             if (session(config('webshop.table_prefix') . 'order_id')) {
-                $order = Order::findOrNew(session(config('webshop.table_prefix') . 'order_id'));
+                $order = $this->getOrderModel()::findOrNew(session(config('webshop.table_prefix') . 'order_id'));
             } else {
-                $order = new Order();
+                $order = $this->getOrderModel();
             }
 
             // Some form fields we don't wanna store
