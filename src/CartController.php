@@ -153,16 +153,19 @@ class CartController extends Controller
                 $amount += $item->product[config('webshop.product_columns.price')] * $item->quantity;
             }
             $shipping_rate = ShippingRate::find(Webshop::old('webshop-shipping'));
-            $amount += $shipping_rate->rate;
-            return [
+            $response = [
                 'items' => $items,
-                'shipping' => [
+                'amount' => $amount,
+            ];
+            if ($shipping_rate) {
+                $response['amount'] += $shipping_rate->rate;
+                $response['shipping'] = [
                     'id' => $shipping_rate->id,
                     'title' => $shipping_rate->title,
                     'rate' => $shipping_rate->rate,
-                ],
-                'amount' => $amount,
-            ];
+                ];
+            }
+            return $response;
         } else {
             return $cart->items()->with('product')->get();
         }
