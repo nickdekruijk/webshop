@@ -103,9 +103,6 @@ class Webshop
                     $html .= '<td><div class="webshop-cart-id">' . $item->id . '</td>';
                 }
                 $html .= '<td><div class="webshop-cart-title">' . $item->product[config('webshop.product_columns.title')] . '</div>';
-                if (!$order) {
-                    $html .= '<div class="webshop-cart-description">' . $item->product[config('webshop.product_columns.description')] . '</div>';
-                }
                 $html .= '</td>';
                 $html .= '<td class="webshop-cart-price" nowrap align="right">' . self::money($item->product[config('webshop.product_columns.price')]) . '</td>';
                 // $html .= '<td class="webshop-cart-quantity"><a href="" class="webshop-cart-minus"></a><span>' . +$item->quantity . '</span><a href="" class="webshop-cart-plus"></a></td>';
