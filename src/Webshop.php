@@ -96,22 +96,22 @@ class Webshop
         if ($items) {
             foreach ($items->where('quantity', '>', 0) as $item) {
                 $validOrder = true;
-                $weight += $item->quantity * $item->product[config('webshop.product_columns.weight')];
-                $amount += $item->quantity * $item->product[config('webshop.product_columns.price')];
+                $weight += $item->quantity * $item->weight;
+                $amount += $item->quantity * $item->price;
                 $html .= '<tr class="webshop-cart-quantity-' . +$item->quantity . '">';
                 if ($showId) {
                     $html .= '<td><div class="webshop-cart-id">' . $item->id . '</td>';
                 }
-                $html .= '<td><div class="webshop-cart-title">' . $item->product[config('webshop.product_columns.title')] . '</div>';
+                $html .= '<td><div class="webshop-cart-title">' . $item->title . '</div>';
                 $html .= '</td>';
-                $html .= '<td class="webshop-cart-price" nowrap align="right">' . self::money($item->product[config('webshop.product_columns.price')]) . '</td>';
+                $html .= '<td class="webshop-cart-price" nowrap align="right">' . self::money($item->price) . '</td>';
                 // $html .= '<td class="webshop-cart-quantity"><a href="" class="webshop-cart-minus"></a><span>' . +$item->quantity . '</span><a href="" class="webshop-cart-plus"></a></td>';
                 if ($order) {
                     $html .= '<td class="webshop-cart-quantity" nowrap align="center">' . +$item->quantity . '</td>';
                 } else {
                     $html .= '<td class="webshop-cart-quantity"><input onchange="this.form.submit()" type="number" name="quantity_' . $item['id'] . '" min="0" value="' . +$item->quantity . '"></td>';
                 }
-                $html .= '<td class="webshop-cart-total" nowrap align="right">' . self::money($item->quantity * $item->product[config('webshop.product_columns.price')]) . '</td>';
+                $html .= '<td class="webshop-cart-total" nowrap align="right">' . self::money($item->quantity * $item->price) . '</td>';
                 $html .= '</tr>';
             }
         }
