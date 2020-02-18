@@ -16,11 +16,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | user_model
+    | order_model
     |--------------------------------------------------------------------------
     |
-    | Allow users to login and see their order status and save cart contents
-    | Set to null to not allow users to login
+    | If you want to customize the Order model then make a new model App\Order
+    | class that extends \NickDeKruijk\Webshop\Model\Order and change the value
+    | below to 'App\Order',
     |
     */
 
