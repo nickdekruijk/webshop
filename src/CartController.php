@@ -126,7 +126,7 @@ class CartController extends Controller
         if (request()->ajax()) {
             return [
                 'subtotal' => self::getItems(),
-                'count' => +$cart_item->quantity,
+                'count' => self::getItems(true)['count'],
             ];
         } else {
             return back()->with(['webshopStatus' => 'addedtocart']);
