@@ -144,6 +144,7 @@ class CartController extends Controller
             $items = [];
             $amount = 0;
             foreach ($cart->items()->with('product')->where('quantity', '!=', 0)->get() as $item) {
+            $count = 0;
                 $items[] = [
                     'id' => $item->product[config('webshop.product_columns.product_id')],
                     'title' => $item->product[config('webshop.product_columns.title')],
@@ -151,11 +152,13 @@ class CartController extends Controller
                     'quantity' => +$item->quantity,
                 ];
                 $amount += $item->product[config('webshop.product_columns.price')] * $item->quantity;
+                $count += $item->quantity;
             }
             $shipping_rate = ShippingRate::find(Webshop::old('webshop-shipping'));
             $response = [
                 'items' => $items,
                 'amount' => $amount,
+                'count' => $count,
             ];
             if ($shipping_rate) {
                 $response['amount'] += $shipping_rate->rate;
