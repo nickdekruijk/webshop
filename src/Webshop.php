@@ -88,10 +88,10 @@ class Webshop
         if ($showId) {
             $html .= '<th class="webshop-cart-id">' . trans('webshop::cart.product_id') . '</th>';
         }
-        $html .= '<th class="webshop-cart-title">' . trans('webshop::cart.product') . '</th>';
-        $html .= '<th class="webshop-cart-price">' . trans('webshop::cart.price') . '</th>';
+        $html .= '<th class="webshop-cart-title" align="left">' . trans('webshop::cart.product') . '</th>';
+        $html .= '<th class="webshop-cart-price" align="right">' . trans('webshop::cart.price') . '</th>';
         $html .= '<th class="webshop-cart-quantity">' . trans('webshop::cart.quantity') . '</th>';
-        $html .= '<th class="webshop-cart-total">' . trans('webshop::cart.total') . '</th>';
+        $html .= '<th class="webshop-cart-total" align="right">' . trans('webshop::cart.total') . '</th>';
         $html .= '</tr>';
         $weight = 0;
         $amount = 0;
@@ -105,15 +105,19 @@ class Webshop
                 if ($showId) {
                     $html .= '<td><div class="webshop-cart-id">' . $item->id . '</td>';
                 }
-                $html .= '<td><div class="webshop-cart-title">' . $item->product[config('webshop.product_columns.title')] . '</div><div class="webshop-cart-description">' . $item->product[config('webshop.product_columns.description')] . '</div></td>';
-                $html .= '<td class="webshop-cart-price">' . self::money($item->product[config('webshop.product_columns.price')]) . '</td>';
+                $html .= '<td><div class="webshop-cart-title">' . $item->product[config('webshop.product_columns.title')] . '</div>';
+                if (!$order) {
+                    $html .= '<div class="webshop-cart-description">' . $item->product[config('webshop.product_columns.description')] . '</div>';
+                }
+                $html .= '</td>';
+                $html .= '<td class="webshop-cart-price" nowrap align="right">' . self::money($item->product[config('webshop.product_columns.price')]) . '</td>';
                 // $html .= '<td class="webshop-cart-quantity"><a href="" class="webshop-cart-minus"></a><span>' . +$item->quantity . '</span><a href="" class="webshop-cart-plus"></a></td>';
                 if ($order) {
-                    $html .= '<td class="webshop-cart-quantity">' . +$item->quantity . '</td>';
+                    $html .= '<td class="webshop-cart-quantity" nowrap align="center">' . +$item->quantity . '</td>';
                 } else {
                     $html .= '<td class="webshop-cart-quantity"><input onchange="this.form.submit()" type="number" name="quantity_' . $item['id'] . '" min="0" value="' . +$item->quantity . '"></td>';
                 }
-                $html .= '<td class="webshop-cart-total">' . self::money($item->quantity * $item->product[config('webshop.product_columns.price')]) . '</td>';
+                $html .= '<td class="webshop-cart-total" nowrap align="right">' . self::money($item->quantity * $item->product[config('webshop.product_columns.price')]) . '</td>';
                 $html .= '</tr>';
             }
         }
@@ -136,7 +140,7 @@ class Webshop
             if ($order) {
                 $shipping_rate = $shipping_rates->find(self::old('webshop-shipping'));
                 if ($showId) {
-                    $html .= '<td><div class="webshop-cart-id">' . $shipping_rate->id . '</td>';
+                    $html .= '<td align="right"><div class="webshop-cart-id">' . $shipping_rate->id . '</td>';
                 }
             } else {
                 $shipping_rate = $shipping_rates->first();
@@ -145,7 +149,7 @@ class Webshop
             $html .= '<td class="webshop-cart-title">' . $shipping_rate->title . '</td>';
             $html .= '<td class="webshop-cart-price"></td>';
             $html .= '<td class="webshop-cart-quantity"></td>';
-            $html .= '<td class="webshop-cart-total">' . self::money($shipping_rate->rate) . '</td>';
+            $html .= '<td class="webshop-cart-total" nowrap align="right">' . self::money($shipping_rate->rate) . '</td>';
         } elseif ($shipping_rates->count() > 1) {
             $html .= '<td colspan="3">';
             $html .= '<div class="select webshop-shipping"><select name="webshop-shipping" onchange="this.form.submit()">';
@@ -161,7 +165,7 @@ class Webshop
             }
             $html .= '</select></div>';
             $html .= '</td>';
-            $html .= '<td class="webshop-cart-total">' . (isset($shipping_rate) ? self::money($shipping_rate->rate) : '') . '</td>';
+            $html .= '<td class="webshop-cart-total" nowrap align="right">' . (isset($shipping_rate) ? self::money($shipping_rate->rate) : '') . '</td>';
         } else {
             $validOrder = false;
             $html .= '<td colspan="4">' . trans('webshop::cart.no-shipping-possible') . '</td>';
@@ -175,7 +179,7 @@ class Webshop
             $html .= '<td class="webshop-cart-title">' . trans('webshop::cart.total_to_pay') . '</td>';
             $html .= '<td class="webshop-cart-price"></td>';
             $html .= '<td class="webshop-cart-quantity"></td>';
-            $html .= '<td class="webshop-cart-total">' . self::money($amount + $shipping_rate->rate) . '</td>';
+            $html .= '<td class="webshop-cart-total" nowrap align="right">' . self::money($amount + $shipping_rate->rate) . '</td>';
             $html .= '</tr>';
         }
         $html .= '</table>';
