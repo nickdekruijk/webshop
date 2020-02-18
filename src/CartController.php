@@ -181,8 +181,6 @@ class CartController extends Controller
                     $mailables = [$mailables];
                 }
                 foreach ($mailables as $mailable) {
-                    // dd($order->pickup);
-                    return new $mailable($order);
                     Mail::to($order->customer['email'])->send(new $mailable($order));
                 }
             }
