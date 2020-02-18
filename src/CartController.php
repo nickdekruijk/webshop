@@ -234,7 +234,7 @@ class CartController extends Controller
         Session::put(config('webshop.table_prefix') . 'form', $request->toArray());
 
         // Try to login when user selected login
-        if ($request->account == 'login') {
+        if ($request->webshop_submit == 'login' || $request->webshop_submit == 'checkout') {
             return $this->login($request);
         }
 
