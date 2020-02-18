@@ -143,8 +143,8 @@ class CartController extends Controller
         if ($compact) {
             $items = [];
             $amount = 0;
-            foreach ($cart->items()->with('product')->where('quantity', '!=', 0)->get() as $item) {
             $count = 0;
+            foreach ($cart->items()->with('product')->with('option')->where('quantity', '!=', 0)->get() as $item) {
                 $items[] = [
                     'id' => $item->product[config('webshop.product_columns.product_id')],
                     'title' => $item->product[config('webshop.product_columns.title')],
