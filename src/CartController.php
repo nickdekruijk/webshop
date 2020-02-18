@@ -94,6 +94,11 @@ class CartController extends Controller
     // Add a product to the cart
     public function add($product_id, $quantity = 1, $product_option_id = null)
     {
+        // If ?option= parameter is given us that if $product_option_id is empty
+        if (!$product_option_id && request()->option) {
+            $product_option_id = request()->option;
+        }
+
         // Create Product model instance with $product_id
         $product = config('webshop.product_model');
         $product = (new $product)->findOrFail($product_id);
