@@ -209,8 +209,12 @@ class CartController extends Controller
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password_login])) {
             // Get customer columns from user
             $column = config('webshop.table_prefix') . 'customer';
-            if (Auth::user()->$column) {
-                $customer = array_intersect_key(Auth::user()->$column, array_flip(config('webshop.customer_columns')));
+            $customer = Auth::user()->$column;
+            if ($customer) {
+                if (!is_array($customer)) {
+                    $customer = (array) json_decode($customer);
+                }
+                $customer = array_intersect_key($customer, array_flip(config('webshop.customer_columns')));
                 Session::put(config('webshop.table_prefix') . 'form', $customer);
             }
             return back();
