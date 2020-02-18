@@ -66,10 +66,7 @@ class Webshop
                 $countries[$country->cca2] = $country->name->common;
             }
         }
-        // echo '</select>';
-        // dd($country->translations->$translation->common);
         asort($countries);
-        // dd($countries);
         return $countries;
     }
 
