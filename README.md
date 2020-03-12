@@ -15,6 +15,8 @@ More info coming soon...
 ## Some seeds with data to start with
 Dutch VAT
 `php artisan db:seed --class=NickDeKruijk\\Webshop\\Seeds\\VatDutch`
+Dutch Discounts
+`php artisan db:seed --class=NickDeKruijk\\Webshop\\Seeds\\DiscountsDutch`
 
 ## License
 Admin is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
