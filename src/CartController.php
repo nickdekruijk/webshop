@@ -144,7 +144,11 @@ class CartController extends Controller
             $items = [];
             $amount = 0;
             $count = 0;
-            foreach ($cart->items()->with('product')->with('option')->where('quantity', '!=', 0)->get() as $item) {
+            $with = ['product'];
+            if (config('webshop.product_option_model')) {
+                $with[] = 'option';
+            }
+            foreach ($cart->items()->with($with)->where('quantity', '!=', 0)->get() as $item) {
                 $items[] = [
                     'id' => $item->product_id,
                     'title' => $item->title,
