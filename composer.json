@@ -1,11 +1,11 @@
 {
     "name": "nickdekruijk/webshop",
-    "keywords": [ "php", "laravel", "webshop", "cart", "checkout" ],
+    "keywords": ["php", "laravel", "webshop", "cart", "checkout"],
     "description": "Add a simple webshop to your Laravel project",
     "license": "MIT",
     "authors": [{
-            "name": "Nick de Kruijk",
-            "email": "git@nickdekruijk.nl"
+        "name": "Nick de Kruijk",
+        "email": "git@nickdekruijk.nl"
     }],
     "minimum-stability": "dev",
     "require": {
@@ -28,7 +28,7 @@
                 "NickDeKruijk\\Webshop\\ServiceProvider"
             ],
             "aliases": {
-            	"Webshop": "NickDeKruijk\\Webshop\\WebshopFacade"
+                "Webshop": "NickDeKruijk\\Webshop\\WebshopFacade"
             }
         }
     }
