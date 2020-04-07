@@ -199,6 +199,9 @@ class CartController extends Controller
                     Mail::send(new $mailable($order));
                 }
             }
+            if (!config('app.debug')) {
+                self::empty();
+            }
             $order->paid = true;
             $order->save();
             Session::put(config('webshop.table_prefix') . 'order_id', null);
@@ -245,6 +248,13 @@ class CartController extends Controller
     {
         Auth::logout();
         return back();
+    }
+
+    // Empty the current users shopping cart
+    public function empty()
+    {
+        $cart = self::getCurrent();
+        $cart->delete();
     }
 
     public function post(Request $request)
