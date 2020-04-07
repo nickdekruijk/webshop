@@ -30,7 +30,7 @@ class CartItem extends Model
 
     public function getPriceAttribute($value)
     {
-        if ($this->option && config('webshop.product_option_columns.price')) {
+        if (config('webshop.product_option_model') && $this->option && config('webshop.product_option_columns.price')) {
             return $this->option[config('webshop.product_option_columns.price')] ?: $this->product[config('webshop.product_columns.price')];
         } else {
             return $this->product[config('webshop.product_columns.price')];
@@ -39,7 +39,7 @@ class CartItem extends Model
 
     public function getWeightAttribute($value)
     {
-        if ($this->option && config('webshop.product_option_columns.weight')) {
+        if (config('webshop.product_option_model') && $this->option && config('webshop.product_option_columns.weight')) {
             return $this->option[config('webshop.product_option_columns.weight')] ?: $this->product[config('webshop.product_columns.weight')];
         } else {
             return $this->product[config('webshop.product_columns.weight')];
@@ -48,11 +48,11 @@ class CartItem extends Model
 
     public function getTitleAttribute($value)
     {
-        return $this->product[config('webshop.product_columns.title')] . ($this->option && $this->option[config('webshop.product_option_columns.title')] ? ' (' . $this->option[config('webshop.product_option_columns.title')] . ')' : '');
+        return $this->product[config('webshop.product_columns.title')] . (config('webshop.product_option_model') && $this->option && $this->option[config('webshop.product_option_columns.title')] ? ' (' . $this->option[config('webshop.product_option_columns.title')] . ')' : '');
     }
 
     public function getDescriptionAttribute($value)
     {
-        return $this->product[config('webshop.product_columns.description')] . ($this->option && $this->option[config('webshop.product_option_columns.description')] ? ' (' . $this->option[config('webshop.product_option_columns.description')] . ')' : '');
+        return $this->product[config('webshop.product_columns.description')] . (config('webshop.product_option_model') && $this->option && $this->option[config('webshop.product_option_columns.description')] ? ' (' . $this->option[config('webshop.product_option_columns.description')] . ')' : '');
     }
 }
