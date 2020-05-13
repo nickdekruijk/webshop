@@ -100,10 +100,9 @@ class Webshop
                 $amount += $item->quantity * $item->price;
                 $html .= '<tr class="webshop-cart-quantity-' . +$item->quantity . '">';
                 if ($showId) {
-                    $html .= '<td><div class="webshop-cart-id">' . $item->product_id . '</td>';
+                    $html .= '<td><div class="webshop-cart-id">' . $item->product_id . '</div></td>';
                 }
-                $html .= '<td><div class="webshop-cart-title">' . $item->title . '</div>';
-                $html .= '</td>';
+                $html .= '<td><div class="webshop-cart-title">' . $item->title . '</div></td>';
                 $html .= '<td class="webshop-cart-price" nowrap align="right">' . self::money($item->price) . '</td>';
                 // $html .= '<td class="webshop-cart-quantity"><a href="" class="webshop-cart-minus"></a><span>' . +$item->quantity . '</span><a href="" class="webshop-cart-plus"></a></td>';
                 if ($order) {
@@ -134,7 +133,7 @@ class Webshop
             if ($order) {
                 $shipping_rate = $shipping_rates->find(self::old('webshop-shipping'));
                 if ($showId) {
-                    $html .= '<td align="right"><div class="webshop-cart-id">' . $shipping_rate->id . '</td>';
+                    $html .= '<td align="right"><div class="webshop-cart-id">' . $shipping_rate->id . '</div></td>';
                 }
             } else {
                 $shipping_rate = $shipping_rates->first();
@@ -168,7 +167,7 @@ class Webshop
         if ($validOrder) {
             $html .= '<tr>';
             if ($showId) {
-                $html .= '<td><div class="webshop-cart-id"></td>';
+                $html .= '<td><div class="webshop-cart-id"></div></td>';
             }
             $html .= '<td class="webshop-cart-title">' . trans('webshop::cart.total_to_pay') . '</td>';
             $html .= '<td class="webshop-cart-price"></td>';
