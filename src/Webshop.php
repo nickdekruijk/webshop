@@ -2,6 +2,7 @@
 
 namespace NickDeKruijk\Webshop;
 
+use NickDeKruijk\Webshop\Model\Discount;
 use NickDeKruijk\Webshop\Model\ShippingRate;
 use Cache;
 use File;
@@ -127,6 +128,27 @@ class Webshop
         // $html .= '<td class="webshop-cart-total">' . self::money($weight, ' ') . ' kg</td>';
         // $html .= '</tr>';
 
+        $free_shipping = false;
+        foreach (Discount::active($amount)->get() as $discount) {
+            if (self::old('coupon_code') == $discount->coupon_code || !$discount->coupon_code) {
+                if ($discount->free_shipping) {
+                    $free_shipping = true;
+                } else {
+                    $html .= '<tr>';
+                    if ($showId) {
+                        $html .= '<td><div class="webshop-cart-id"></div></td>';
+                    }
+                    $html .= '<td class="webshop-cart-title">' . $discount->title . ($discount->coupon_code ? ' (' . $discount->coupon_code . ')' : '') . '</td>';
+                    $html .= '<td class="webshop-cart-price"></td>';
+                    $html .= '<td class="webshop-cart-quantity"></td>';
+                    $discountAmount = -$discount->discount_abs - ($amount * $discount->discount_perc / 100);
+                    $amount += $discountAmount;
+                    $html .= '<td class="webshop-cart-total" nowrap align="right">' . self::money($discountAmount) . '</td>';
+                    $html .= '</tr>';
+                }
+            }
+        }
+
         $shipping_rates = ShippingRate::valid($amount, $weight, self::old('country', Webshop::geoCountry()))->get();
         $html .= '<tr>';
         if ($shipping_rates->count() == 1 || $order) {
@@ -142,7 +164,7 @@ class Webshop
             $html .= '<td class="webshop-cart-title">' . $shipping_rate->title . '</td>';
             $html .= '<td class="webshop-cart-price"></td>';
             $html .= '<td class="webshop-cart-quantity"></td>';
-            $html .= '<td class="webshop-cart-total" nowrap align="right">' . self::money($shipping_rate->rate) . '</td>';
+            $html .= '<td class="webshop-cart-total" nowrap align="right">' . self::money($free_shipping ? 0 : $shipping_rate->rate) . '</td>';
         } elseif ($shipping_rates->count() > 1) {
             $html .= '<td colspan="3">';
             $html .= '<div class="select webshop-shipping"><select name="webshop-shipping" onchange="this.form.submit()">';
@@ -151,14 +173,14 @@ class Webshop
                 if (self::old('webshop-shipping') == $rate->id) {
                     $shipping_rate = $rate;
                 }
-                $html .= '<option value="' . $rate->id . '"' . (self::old('webshop-shipping') == $rate->id ? ' selected' : '') . '>' . $rate->title . ($rate->rate > 0 ? ' ' . self::money($rate->rate) : '') . '</option>';
+                $html .= '<option value="' . $rate->id . '"' . (self::old('webshop-shipping') == $rate->id ? ' selected' : '') . '>' . $rate->title . ($rate->rate > 0 ? ' ' . self::money($free_shipping ? 0 : $rate->rate) : '') . '</option>';
             }
             if (empty($shipping_rate)) {
                 $validOrder = false;
             }
             $html .= '</select></div>';
             $html .= '</td>';
-            $html .= '<td class="webshop-cart-total" nowrap align="right">' . (isset($shipping_rate) ? self::money($shipping_rate->rate) : '') . '</td>';
+            $html .= '<td class="webshop-cart-total" nowrap align="right">' . (isset($shipping_rate) ? self::money($free_shipping ? 0 : $shipping_rate->rate) : '') . '</td>';
         } else {
             $validOrder = false;
             $html .= '<td colspan="4">' . trans('webshop::cart.no-shipping-possible') . '</td>';
@@ -172,7 +194,7 @@ class Webshop
             $html .= '<td class="webshop-cart-title">' . trans('webshop::cart.total_to_pay') . '</td>';
             $html .= '<td class="webshop-cart-price"></td>';
             $html .= '<td class="webshop-cart-quantity"></td>';
-            $html .= '<td class="webshop-cart-total" nowrap align="right">' . self::money($amount + $shipping_rate->rate) . '</td>';
+            $html .= '<td class="webshop-cart-total" nowrap align="right">' . self::money($amount + ($free_shipping ? 0 : $shipping_rate->rate)) . '</td>';
             $html .= '</tr>';
         }
         $html .= '</table>';

@@ -15,7 +15,9 @@ return [
     'select-shipping' => 'Select shipping',
     'payment_canceled' => 'Payment canceled, try again.',
     'payment_failed' => 'Payment failed, try again.',
+    'discount' => 'Discount',
     'checkout_validate_messages' => [
+        'coupon_code' => 'Invalid coupon code.',
         'terms.required' => 'You need to agree.',
         'password_login.required' => 'Password is required.',
         'password_create.required' => 'Password is required.',

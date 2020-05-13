@@ -9,6 +9,7 @@ use Mail;
 use Illuminate\Http\Request;
 use NickDeKruijk\Webshop\Model\Cart;
 use NickDeKruijk\Webshop\Model\CartItem;
+use NickDeKruijk\Webshop\Model\Discount;
 use NickDeKruijk\Webshop\Model\ShippingRate;
 use Mollie\Laravel\Facades\Mollie;
 
@@ -134,7 +135,7 @@ class CartController extends Controller
     }
 
     // Return all cart content
-    public static function getItems($compact = false)
+    public static function getItems($compact = false, $coupon_code = null)
     {
         $cart = self::getCurrent();
         if (!$cart) {
@@ -158,6 +159,23 @@ class CartController extends Controller
                 $amount += $item->price * $item->quantity;
                 $count += $item->quantity;
             }
+            $free_shipping = false;
+            foreach (Discount::active($amount)->get() as $discount) {
+                if ($coupon_code == $discount->coupon_code || !$discount->coupon_code) {
+                    if ($discount->free_shipping) {
+                        $free_shipping = true;
+                    } else {
+                        $discountAmount = -$discount->discount_abs - ($amount * $discount->discount_perc / 100);
+                        $amount += $discountAmount;
+                        $items[] = [
+                            'id' => null,
+                            'title' => $discount->title . ($discount->coupon_code ? ' (' . $discount->coupon_code . ')' : ''),
+                            'price' => $discountAmount,
+                            'quantity' => 1,
+                        ];
+                    }
+                }
+            }
             $shipping_rate = ShippingRate::find(Webshop::old('webshop-shipping'));
             $response = [
                 'items' => $items,
@@ -165,11 +183,11 @@ class CartController extends Controller
                 'count' => $count,
             ];
             if ($shipping_rate) {
-                $response['amount'] += $shipping_rate->rate;
+                $response['amount'] += $free_shipping ? 0 : $shipping_rate->rate;
                 $response['shipping'] = [
                     'id' => $shipping_rate->id,
                     'title' => $shipping_rate->title,
-                    'rate' => $shipping_rate->rate,
+                    'rate' => $free_shipping ? 0 : $shipping_rate->rate,
                 ];
             }
             return $response;
@@ -349,7 +367,7 @@ class CartController extends Controller
             // Finalize the Order and save it
             $order->customer = $customer;
             $order->html = Webshop::showCart(true);
-            $items = self::getItems(true);
+            $items = self::getItems(true, $customer['coupon_code']);
             $order->products = $items['items'];
             $order->amount = $items['amount'];
             $order->save();
@@ -374,7 +392,7 @@ class CartController extends Controller
             return redirect($payment->getCheckoutUrl(), 303);
         }
 
-        // No checkout, just update quantity
+        // No checkout, just update quantity and check coupon_code
         if (self::getCurrent()) {
             foreach (self::getCurrent()->items as $item) {
                 if ($request['quantity_' . $item->id] != $item->quantity) {
@@ -386,6 +404,8 @@ class CartController extends Controller
                     $item->save();
                 }
             }
+            // Run only the coupon_code validation
+            $request->validate(['coupon_code' => config('webshop.checkout_validate.coupon_code')], trans('webshop::cart.checkout_validate_messages'));
         }
         return back();
     }

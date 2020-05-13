@@ -15,7 +15,9 @@ return [
     'select-shipping' => 'Selecteer verzendmethode',
     'payment_canceled' => 'Betaling geannuleerd, probeerd het nog eens.',
     'payment_failed' => 'Betaling mislukt, probeerd het nog eens.',
+    'discount' => 'Korting',
     'checkout_validate_messages' => [
+        'coupon_code' => 'Ongeldige kortingscode of niet van toepassing.',
         'zipcode.required' => 'Postcode is verplicht.',
         'city.required' => 'Plaats is verplicht.',
         'terms.required' => 'Akkoord gaan is verplicht.',
