@@ -15,6 +15,7 @@ More info coming soon...
 ## Some seeds with data to start with
 Dutch VAT
 `php artisan db:seed --class=NickDeKruijk\\Webshop\\Seeds\\VatDutch`
+
 Dutch Discounts
 `php artisan db:seed --class=NickDeKruijk\\Webshop\\Seeds\\DiscountsDutch`
 
