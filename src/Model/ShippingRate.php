@@ -27,6 +27,24 @@ class ShippingRate extends Model
         return $this->belongsTo(Vat::class);
     }
 
+    public function getRateExclVatAttribute($value)
+    {
+        if ($this->vat->included) {
+            return $this->rate / (1 + $this->vat->rate / 100);
+        } else {
+            return $this->rate;
+        }
+    }
+
+    public function getRateInclVatAttribute($value)
+    {
+        if ($this->vat->included) {
+            return $this->rate;
+        } else {
+            return $this->rate * (1 + $this->vat->rate / 100);
+        }
+    }
+
     public function scopeValid($query, $amount, $weight, $country)
     {
         $query->where(function ($query) use ($amount) {

@@ -9,6 +9,8 @@ return [
     'dec_point' => ',',
     'thousands_sep' => '.',
     'subtotal' => 'Subtotaal',
+    'subtotal_vatIncl' => 'Subtotaal inclusief BTW',
+    'subtotal_vatExcl' => 'Subtotaal exclusief BTW',
     'weight' => 'Gewicht',
     'total_to_pay' => 'Af te rekenen bedrag',
     'no-shipping-possible' => 'Geen verzending mogelijk',
@@ -16,6 +18,9 @@ return [
     'payment_canceled' => 'Betaling geannuleerd, probeerd het nog eens.',
     'payment_failed' => 'Betaling mislukt, probeerd het nog eens.',
     'discount' => 'Korting',
+    'vat' => 'BTW',
+    'vatIncl' => 'Inclusief BTW',
+    'vatExcl' => 'Exclusief BTW',
     'checkout_validate_messages' => [
         'coupon_code' => 'Ongeldige kortingscode of niet van toepassing.',
         'zipcode.required' => 'Postcode is verplicht.',

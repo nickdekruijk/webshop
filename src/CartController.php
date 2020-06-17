@@ -366,7 +366,7 @@ class CartController extends Controller
 
             // Finalize the Order and save it
             $order->customer = $customer;
-            $order->html = Webshop::showCart(true);
+            $order->html = Webshop::showCart(true, false, true);
             $items = self::getItems(true, $customer['coupon_code']);
             $order->products = $items['items'];
             $order->amount = $items['amount'];

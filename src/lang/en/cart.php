@@ -9,6 +9,8 @@ return [
     'dec_point' => '.',
     'thousands_sep' => ',',
     'subtotal' => 'Subtotal',
+    'subtotal_vatIncl' => 'Subtotal with VAT',
+    'subtotal_vatExcl' => 'Subtotal without VAT',
     'weight' => 'Weight',
     'total_to_pay' => 'Total amount to pay',
     'no-shipping-possible' => 'No shipping possible',
@@ -16,6 +18,9 @@ return [
     'payment_canceled' => 'Payment canceled, try again.',
     'payment_failed' => 'Payment failed, try again.',
     'discount' => 'Discount',
+    'vat' => 'VAT',
+    'vatIncl' => 'VAT Included',
+    'vatExcl' => 'VAT Excluded',
     'checkout_validate_messages' => [
         'coupon_code' => 'Invalid coupon code.',
         'terms.required' => 'You need to agree.',
