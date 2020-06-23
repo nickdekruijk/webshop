@@ -11,6 +11,7 @@ use NickDeKruijk\Webshop\Model\Cart;
 use NickDeKruijk\Webshop\Model\CartItem;
 use NickDeKruijk\Webshop\Model\Discount;
 use NickDeKruijk\Webshop\Model\ShippingRate;
+use NickDeKruijk\Webshop\Rules\CouponCode;
 use Mollie\Laravel\Facades\Mollie;
 
 class CartController extends Controller
@@ -405,7 +406,7 @@ class CartController extends Controller
                 }
             }
             // Run only the coupon_code validation
-            $request->validate(['coupon_code' => config('webshop.checkout_validate.coupon_code')], trans('webshop::cart.checkout_validate_messages'));
+            $request->validate(['coupon_code' => ['nullable', new CouponCode]], trans('webshop::cart.checkout_validate_messages'));
         }
         return back();
     }

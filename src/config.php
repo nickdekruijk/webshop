@@ -133,7 +133,6 @@ return [
 
     'checkout_validate' => [
         'webshop-shipping' => 'required',
-        'coupon_code' => ['nullable', new NickDeKruijk\Webshop\Rules\CouponCode],
         'email' => 'required|email:rfc,dns,spoof,filter,strict',
         'name' => 'required',
         'address' => 'required',
