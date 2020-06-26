@@ -64,24 +64,23 @@ class CartController extends Controller
         }
     }
 
-    // Return the total count of items in the cart
-    // When $unique = true it returns the total amount of unique items in the cart, even if their quantity is zero
-    // When $unique = false (default) it returns the real amount of items (all quantities combined)
+    /**
+     * Return total count of items in the cart.
+     *
+     * @param  boolean $unique When true return total amount of unique items instead of adding all quantities together.
+     * @return integer
+     */
     public static function count($unique = false)
     {
         $cart = self::getCurrent();
         if (!$cart) {
             return 0;
         }
-        if ($unique) {
-            return $cart->items->count();
-        } else {
-            $count = 0;
-            foreach ($cart->items as $item) {
-                $count += $item->quantity;
-            }
-            return $count;
+        $count = 0;
+        foreach ($cart->items as $item) {
+            $count += $unique ? ($item->quantity == 0 ? 0 : 1) : $item->quantity;
         }
+        return $count;
     }
 
     public function subtotal(Cart $cart)

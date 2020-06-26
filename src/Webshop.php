@@ -30,6 +30,12 @@ class Webshop
         return $html;
     }
 
+    /**
+     * Return total count of items in the cart.
+     *
+     * @param  boolean $unique When true return total amount of unique items instead of adding all quantities together.
+     * @return integer
+     */
     public static function count($unique = false)
     {
         return CartController::count($unique);
