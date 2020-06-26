@@ -66,6 +66,13 @@ class Webshop
         return $countries;
     }
 
+    /**
+     * Return user form input values from session.
+     *
+     * @param  string $key Input name.
+     * @param  string $default Default value if input was empty.
+     * @return string
+     */
     public static function old($key, $default = null)
     {
         return session(config('webshop.table_prefix') . 'form.' . $key, $default);
