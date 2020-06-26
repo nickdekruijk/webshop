@@ -88,15 +88,6 @@ class CartController extends Controller
         return $count;
     }
 
-    public function subtotal(Cart $cart)
-    {
-        $subtotal = 0;
-        foreach ($cart->items() as $item) {
-            $subtotal = $item->quantity * $item->price;
-        }
-        return $subtotal;
-    }
-
     // Add a product to the cart
     public function add($product_id, $quantity = 1, $product_option_id = null)
     {
