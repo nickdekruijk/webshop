@@ -88,10 +88,17 @@ class CartController extends Controller
         return $count;
     }
 
-    // Add a product to the cart
+    /**
+     * Add a product to the cart.
+     *
+     * @param  integer $product_id
+     * @param  integer $quantity
+     * @param  integer $product_option_id
+     * @return Response
+     */
     public function add($product_id, $quantity = 1, $product_option_id = null)
     {
-        // If ?option= parameter is given us that if $product_option_id is empty
+        // If ?option= parameter is given use that if $product_option_id is empty
         if (!$product_option_id && request()->option) {
             $product_option_id = request()->option;
         }
