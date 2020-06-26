@@ -19,7 +19,7 @@ class CartController extends Controller
     /**
      * Get current Cart based on sessionId or user.
      *
-     * @param boolean $create Create a new Cart instance if needed
+     * @param  boolean $create If true create and store a new Cart instance if no existing cart is found
      * @return Cart
      */
     private static function currentCart($create = false)
