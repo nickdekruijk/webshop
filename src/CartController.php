@@ -273,8 +273,12 @@ class CartController extends Controller
         return back();
     }
 
-    // Empty the current users shopping cart
-    public function empty()
+    /**
+     * Empty the current users shopping cart
+     *
+     * @return void
+     */
+    public static function empty()
     {
         $cart = self::currentCart();
         $cart->delete();
