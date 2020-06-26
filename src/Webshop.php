@@ -41,9 +41,17 @@ class Webshop
         return CartController::count($unique);
     }
 
-    public static function money($amount, $currency = null)
+    /**
+     * Return a formatted representation of an amount with currency symbol and decimals.
+     *
+     * @param  float   $amount
+     * @param  string  $currency
+     * @param  integer $decimals
+     * @return string
+     */
+    public static function money($amount, $currency = null, $decimals = 2)
     {
-        return ($currency ?: config('webshop.currency', '&euro; ')) . number_format($amount, 2, trans('webshop::cart.dec_point'), trans('webshop::cart.thousands_sep'));
+        return ($currency ?: config('webshop.currency', '&euro; ')) . number_format($amount, $decimals, trans('webshop::cart.dec_point'), trans('webshop::cart.thousands_sep'));
     }
 
     public static function geoCountry()
