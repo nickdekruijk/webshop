@@ -16,8 +16,13 @@ use Mollie\Laravel\Facades\Mollie;
 
 class CartController extends Controller
 {
-    // Get current Cart based on sessionId or user
-    private static function getCurrent($create = false)
+    /**
+     * Get current Cart based on sessionId or user.
+     *
+     * @param boolean $create Create a new Cart instance if needed
+     * @return Cart
+     */
+    private static function currentCart($create = false)
     {
         // Session variable to store cart id in
         $session_cart_id = config('webshop.table_prefix') . 'cart_id';
@@ -72,7 +77,7 @@ class CartController extends Controller
      */
     public static function count($unique = false)
     {
-        $cart = self::getCurrent();
+        $cart = self::currentCart();
         if (!$cart) {
             return 0;
         }
@@ -105,7 +110,7 @@ class CartController extends Controller
         $product = (new $product)->findOrFail($product_id);
 
         // Get the current cart, create if needed
-        $cart = $this->getCurrent(true);
+        $cart = $this->currentCart(true);
 
         // Check if product is already in cart
         $cart_item = $cart->items()->where('product_id', $product->id)->where('product_option_id', $product_option_id)->first();
@@ -137,7 +142,7 @@ class CartController extends Controller
     // Return all cart content
     public static function getItems($compact = false, $coupon_code = null)
     {
-        $cart = self::getCurrent();
+        $cart = self::currentCart();
         if (!$cart) {
             return [];
         }
@@ -271,7 +276,7 @@ class CartController extends Controller
     // Empty the current users shopping cart
     public function empty()
     {
-        $cart = self::getCurrent();
+        $cart = self::currentCart();
         $cart->delete();
     }
 
@@ -393,8 +398,8 @@ class CartController extends Controller
         }
 
         // No checkout, just update quantity and check coupon_code
-        if (self::getCurrent()) {
-            foreach (self::getCurrent()->items as $item) {
+        if (self::currentCart()) {
+            foreach (self::currentCart()->items as $item) {
                 if ($request['quantity_' . $item->id] != $item->quantity) {
                     if ($request['quantity_' . $item->id]) {
                         $item->quantity = $request['quantity_' . $item->id];
