@@ -20,7 +20,6 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         if (config('webshop.migrations', true)) {
             $this->loadMigrationsFrom(__DIR__ . '/migrations');
         }
-        //         $this->loadRoutesFrom(__DIR__.'/routes.php');
     }
 
     /**
