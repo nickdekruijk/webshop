@@ -137,66 +137,151 @@ class CartController extends Controller
         }
     }
 
-    // Return all cart content
-    public static function getItems($compact = false, $coupon_code = null)
+    /**
+     * Return all cart items and calculate total amounts, discount and VAT.
+     *
+     * @param  integer $coupon_code Apply discount for a coupon code.
+     * @return object
+     */
+    public static function cartItems($coupon_code = null)
     {
+        // Get cart contents
         $cart = self::currentCart();
         if (!$cart) {
             return [];
         }
-        if ($compact) {
-            $items = [];
-            $amount = 0;
-            $count = 0;
-            $with = ['product'];
-            if (config('webshop.product_option_model')) {
-                $with[] = 'option';
+
+        // Initialize response object
+        $response = (object) [
+            'items' => [],
+            'amount_including_vat' => 0,
+            'amount_excluding_vat' => 0,
+            'amount_only_items' => 0,
+            'amount_vat' => [],
+            'weight' => 0,
+            'count' => 0,
+            'count_unique' => 0,
+        ];
+
+        // Used for tracking the highest VAT rate to calculate shipping costs
+        $max_vat_rate = 0;
+
+        // Check if product_option is used
+        $with = ['product'];
+        if (config('webshop.product_option_model')) {
+            $with[] = 'option';
+        }
+
+        // Walk thru all items in the cart and calculate VAT
+        foreach ($cart->items()->with($with)->where('quantity', '!=', 0)->get() as $item) {
+            $response->items[] = (object) [
+                'id' => $item->id,
+                'product_id' => $item->product_id,
+                'title' => $item->title,
+                'price' => $item->price,
+                'weight' => $item->weight,
+                'quantity' => +$item->quantity,
+            ];
+            $response->amount_including_vat += $item->price->price_including_vat * $item->quantity;
+            $response->amount_excluding_vat += $item->price->price_excluding_vat * $item->quantity;
+            $response->amount_vat[$item->price->vat_rate] = ($response->amount_vat[$item->price->vat_rate] ?? 0) + ($item->price->price_including_vat - $item->price->price_excluding_vat) * $item->quantity;
+
+            if ($item->price->vat_rate > $max_vat_rate) {
+                $max_vat_rate = $item->price->vat_rate;
             }
-            foreach ($cart->items()->with($with)->where('quantity', '!=', 0)->get() as $item) {
-                $items[] = [
-                    'id' => $item->product_id,
-                    'title' => $item->title,
-                    'price' => $item->price,
-                    'quantity' => +$item->quantity,
-                ];
-                $amount += $item->price * $item->quantity;
-                $count += $item->quantity;
-            }
-            $free_shipping = false;
-            foreach (Discount::active($amount)->get() as $discount) {
-                if ($coupon_code == $discount->coupon_code || !$discount->coupon_code) {
-                    if ($discount->free_shipping) {
-                        $free_shipping = true;
-                    } else {
-                        $discountAmount = -$discount->discount_abs - ($amount * $discount->discount_perc / 100);
-                        $amount += $discountAmount;
-                        $items[] = [
-                            'id' => null,
-                            'title' => $discount->title . ($discount->coupon_code ? ' (' . $discount->coupon_code . ')' : ''),
-                            'price' => $discountAmount,
-                            'quantity' => 1,
-                        ];
-                    }
+            $response->weight += $item->weight * $item->quantity;;
+
+            $response->count += $item->quantity;
+            $response->count_unique++;
+        }
+
+        // Fetch all available shipping rates
+        $shipping_rates = ShippingRate::valid($response->amount_including_vat, $response->weight, Webshop::old('country', CountryController::geoCountry()))->get();
+
+        // Find selected shipping rate and generate the options if available
+        $shipping_rate = null;
+        $shipping_options = [];
+        if ($shipping_rates->count() == 1) {
+            $shipping_rate = $shipping_rates->first();
+            $shipping_options[$shipping_rate->id] = $shipping_rate->title;
+        } elseif ($shipping_rates->count() > 1) {
+            foreach ($shipping_rates as $rate) {
+                $shipping_options[$rate->id] = $rate->title;
+                if (Webshop::old('webshop-shipping') == $rate->id) {
+                    $shipping_rate = $rate;
                 }
             }
-            $shipping_rate = ShippingRate::find(Webshop::old('webshop-shipping'));
-            $response = [
-                'items' => $items,
-                'amount' => $amount,
-                'count' => $count,
+        }
+
+        // Fetch all available discounts
+        $discounts = Discount::active($response->amount_including_vat)->get();
+
+        // Check if customer is eligible for free shipping
+        foreach ($discounts as $discount) {
+            if ($coupon_code == $discount->coupon_code || !$discount->coupon_code) {
+                if ($discount->free_shipping && $shipping_rate) {
+                    $shipping_rate->rate = 0;
+                }
+            }
+        }
+
+        // Create shipping item and calculate VAT
+        if ($shipping_rate) {
+            $shipping = (object) [
+                'id' => null,
+                'title' => $shipping_rate->title,
+                'shipping_options' => $shipping_options,
+                'price' => (object) [
+                    'price' => $shipping_rate->rate,
+                    'vat_included' => $shipping_rate->vat->included,
+                    'vat_rate' => $max_vat_rate,
+                    'price_including_vat' => null,
+                    'price_excluding_vat' => null,
+                    'price_vat' => null,
+                ],
+                'quantity' => 1,
             ];
-            if ($shipping_rate) {
-                $response['amount'] += $free_shipping ? 0 : $shipping_rate->rate;
-                $response['shipping'] = [
-                    'id' => $shipping_rate->id,
-                    'title' => $shipping_rate->title,
-                    'rate' => $free_shipping ? 0 : $shipping_rate->rate,
+
+            if ($shipping->price->vat_included) {
+                $shipping->price->price_including_vat = $shipping_rate->rate;
+                $shipping->price->price_excluding_vat = number_format($shipping_rate->rate / ($max_vat_rate / 100 + 1), 2);
+            } else {
+                $shipping->price->price_including_vat = number_format($shipping_rate->rate * ($max_vat_rate / 100 + 1), 2);
+                $shipping->price->price_excluding_vat = $shipping_rate->rate;
+            }
+            $response->amount_vat[$max_vat_rate] = ($response->amount_vat[$max_vat_rate] ?? 0) + ($shipping->price->price_including_vat - $shipping->price->price_excluding_vat) * $item->quantity;
+
+            $response->amount_including_vat += $shipping->price->price_including_vat;
+            $response->amount_excluding_vat += $shipping->price->price_excluding_vat;
+            $response->items[] = $shipping;
+        } else {
+            // If no shipping available or selected add empty item
+            $response->items[] = (object) [
+                'shipping_options' => $shipping_options,
+            ];
+        }
+
+        foreach ($discounts as $discount) {
+            if ($coupon_code == $discount->coupon_code || !$discount->coupon_code) {
+                $discountAmount = number_format(-$discount->discount_abs - ($response->amount_including_vat * $discount->discount_perc / 100), 2);
+                $response->amount_including_vat += $discountAmount;
+                $response->items[] = (object) [
+                    'id' => null,
+                    'title' => $discount->title . ($discount->coupon_code ? ' (' . $discount->coupon_code . ')' : ''),
+                    'price' => (object) [
+                        'price' => $discountAmount,
+                        'vat_included' => true,
+                        'vat_rate' => null,
+                        'price_including_vat' => $discountAmount,
+                        'price_excluding_vat' => $discountAmount,
+                        'price_vat' => $discountAmount,
+                    ],
+                    'quantity' => 1,
                 ];
             }
-            return $response;
-        } else {
-            return $cart->items()->with('product')->get();
         }
+
+        return $response;
     }
 
     private static function getOrderModel()
