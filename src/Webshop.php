@@ -29,7 +29,7 @@ class Webshop
      */
     public static function money($amount, $currency = null, $decimals = 2)
     {
-        return ($currency ?: config('webshop.currency', '&euro; ')) . number_format($amount, $decimals, trans('webshop::cart.dec_point'), trans('webshop::cart.thousands_sep'));
+        return ($currency ?: config('webshop.currency', '€ ')) . number_format($amount, $decimals, trans('webshop::cart.dec_point'), trans('webshop::cart.thousands_sep'));
     }
 
     /**
