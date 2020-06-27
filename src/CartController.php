@@ -463,10 +463,10 @@ class CartController extends Controller
 
             // Finalize the Order and save it
             $order->customer = $customer;
-            $order->html = Webshop::showCart(true, false, true);
-            $items = self::getItems(true, $customer['coupon_code']);
-            $order->products = $items['items'];
-            $order->amount = $items['amount'];
+            $order->html = Webshop::showCart(1, true);
+            $items = self::cartItems($customer['coupon_code']);
+            $order->products = $items->items;
+            $order->amount = $items->amount_including_vat;
             $order->save();
 
             // Get mollie payment id and set redirect/webhook urls
