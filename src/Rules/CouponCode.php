@@ -27,7 +27,7 @@ class CouponCode implements Rule
      */
     public function passes($attribute, $value)
     {
-        return Discount::valid($value, CartController::getItems(true)['amount'])->count();
+        return Discount::valid($value, CartController::cartItems()->amount_including_vat)->count();
     }
 
     /**
