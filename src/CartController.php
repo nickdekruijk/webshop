@@ -483,7 +483,7 @@ class CartController extends Controller
             return redirect($payment->getCheckoutUrl(), 303);
         }
 
-        // No checkout, just update quantity and check coupon_code
+        // No checkout, just update quantity and validate coupon_code/shipping
         if (self::currentCart()) {
             foreach (self::currentCart()->items as $item) {
                 if ($request['quantity_' . $item->id] != $item->quantity) {
@@ -495,8 +495,11 @@ class CartController extends Controller
                     $item->save();
                 }
             }
-            // Run only the coupon_code validation
-            $request->validate(['coupon_code' => ['nullable', new CouponCode]], trans('webshop::cart.checkout_validate_messages'));
+            // Run only the coupon_code and shipping validation
+            $request->validate([
+                'webshop-shipping' => 'required',
+                'coupon_code' => ['nullable', new CouponCode],
+            ], trans('webshop::cart.checkout_validate_messages'));
         }
         return back();
     }
