@@ -22,6 +22,7 @@ return [
     'vatIncl' => 'Inclusief BTW',
     'vatExcl' => 'Exclusief BTW',
     'checkout_validate_messages' => [
+        'webshop-shipping.required' => 'Geen verzendmethode geselecteerd.',
         'coupon_code' => 'Ongeldige kortingscode of niet van toepassing.',
         'zipcode.required' => 'Postcode is verplicht.',
         'city.required' => 'Plaats is verplicht.',
