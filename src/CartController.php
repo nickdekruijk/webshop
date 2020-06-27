@@ -3,6 +3,7 @@
 namespace NickDeKruijk\Webshop;
 
 use App\Http\Controllers\Controller;
+use App\Order;
 use Auth;
 use Session;
 use Mail;
@@ -289,26 +290,32 @@ class CartController extends Controller
         return new $model;
     }
 
+    public function markOrderAsPaid(Order $order)
+    {
+        if (!$order->paid) {
+            // Send notifications
+            $mailables = config('webshop.mailables_paid');
+            if (!is_array($mailables)) {
+                $mailables = [$mailables];
+            }
+            foreach ($mailables as $mailable) {
+                return new $mailable($order);
+                Mail::send(new $mailable($order));
+            }
+            $order->paid = true;
+            $order->save();
+        }
+    }
+
     public function verifyPayment(Request $request)
     {
         $order = $this->getOrderModel()::findOrFail(session(config('webshop.table_prefix') . 'order_id'));
         $payment = Mollie::api()->payments()->get($order->payment_id);
         if ($payment->isPaid()) {
-            if (!$order->paid) {
-                // Send notifications
-                $mailables = config('webshop.mailables_paid');
-                if (!is_array($mailables)) {
-                    $mailables = [$mailables];
-                }
-                foreach ($mailables as $mailable) {
-                    Mail::send(new $mailable($order));
-                }
-            }
+            return $this->markOrderAsPaid($order);
             if (!config('app.debug')) {
                 self::empty();
             }
-            $order->paid = true;
-            $order->save();
             Session::put(config('webshop.table_prefix') . 'order_id', null);
             return redirect(config('webshop.checkout_redirect_paid'));
         } else {
@@ -322,8 +329,7 @@ class CartController extends Controller
         $order = $this->getOrderModel()::where('payment_id', $request->id)->firstOrFail();
         $payment = Mollie::api()->payments()->get($request->id);
         if ($payment->isPaid()) {
-            $order->paid = true;
-            $order->save();
+            $this->markOrderAsPaid($order);
         }
     }
 
