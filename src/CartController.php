@@ -249,7 +249,7 @@ class CartController extends Controller
                 $shipping->price->price_including_vat = number_format($shipping_rate->rate * ($max_vat_rate / 100 + 1), 2);
                 $shipping->price->price_excluding_vat = $shipping_rate->rate;
             }
-            $response->amount_vat[$max_vat_rate] = ($response->amount_vat[$max_vat_rate] ?? 0) + ($shipping->price->price_including_vat - $shipping->price->price_excluding_vat) * $item->quantity;
+            $response->amount_vat[$max_vat_rate] = ($response->amount_vat[$max_vat_rate] ?? 0) + $shipping->price->price_including_vat - $shipping->price->price_excluding_vat;
 
             $response->amount_including_vat += $shipping->price->price_including_vat;
             $response->amount_excluding_vat += $shipping->price->price_excluding_vat;
