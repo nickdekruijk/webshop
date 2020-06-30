@@ -77,10 +77,4 @@ class Webshop
         $items = CartController::cartItems(self::old('coupon_code'));
         return view('webshop::showcart', compact('vat_show', 'hide_interaction', 'items'));
     }
-
-    // Must be called after showCart so validOrder session will be set
-    public static function validOrder()
-    {
-        return Session::get(config('webshop.table_prefix') . 'validOrder');
-    }
 }
