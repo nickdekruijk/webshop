@@ -311,7 +311,7 @@ class CartController extends Controller
         $order = $this->getOrderModel()::findOrFail(session(config('webshop.table_prefix') . 'order_id'));
         $payment = Mollie::api()->payments()->get($order->payment_id);
         if ($payment->isPaid()) {
-            return $this->markOrderAsPaid($order);
+            $this->markOrderAsPaid($order);
             if (!config('app.debug')) {
                 self::empty();
             }
