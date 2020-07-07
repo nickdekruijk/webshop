@@ -5,6 +5,7 @@ namespace NickDeKruijk\Webshop;
 use App\Http\Controllers\Controller;
 use App\Order;
 use Auth;
+use Log;
 use Session;
 use Mail;
 use Illuminate\Http\Request;
@@ -68,6 +69,12 @@ class CartController extends Controller
             // And return it
             return $cart;
         }
+    }
+
+    private static function log($type, $message)
+    {
+        $message = "\t" . request()->ip() . "\t" . $message;
+        Log::channel('webshop')->$type($message);
     }
 
     /**
@@ -300,6 +307,7 @@ class CartController extends Controller
             }
             foreach ($mailables as $mailable) {
                 Mail::send(new $mailable($order));
+                self::log('info', 'Mail sent: ' . $mailable . ' ' . $order->customer['email']);
             }
             $order->paid = true;
             $order->save();
@@ -311,6 +319,7 @@ class CartController extends Controller
         $order = $this->getOrderModel()::findOrFail(session(config('webshop.table_prefix') . 'order_id'));
         $payment = Mollie::api()->payments()->get($order->payment_id);
         if ($payment->isPaid()) {
+            self::log('info', 'Verified payment: ' . $order->payment_id);
             $this->markOrderAsPaid($order);
             if (!config('app.debug')) {
                 self::empty();
@@ -318,12 +327,14 @@ class CartController extends Controller
             Session::put(config('webshop.table_prefix') . 'order_id', null);
             return redirect(config('webshop.checkout_redirect_paid'));
         } else {
+            self::log('notice', 'Failed payment: ' . $order->payment_id . ' (' . $payment->status . ')');
             return redirect()->route('webshop-cart-show')->with(['payment_error' => trans('webshop::cart.payment_' . $payment->status)]);
         }
     }
 
     public function webhookMollie(Request $request)
     {
+        self::log('info', 'Mollie webhook: ' . $request->id);
         abort_if(!$request->id, 404);
         $order = $this->getOrderModel()::where('payment_id', $request->id)->firstOrFail();
         $payment = Mollie::api()->payments()->get($request->id);
@@ -335,6 +346,7 @@ class CartController extends Controller
     public function login(Request $request)
     {
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password_login])) {
+            self::log('info', 'Login: ' . $request->email);
             // Get customer columns from user
             $column = config('webshop.table_prefix') . 'customer';
             $customer = Auth::user()->$column;
@@ -347,6 +359,7 @@ class CartController extends Controller
             }
             return back();
         } else {
+            self::log('notice', 'Login failed: ' . $request->email);
             $errors = [
                 'password_login' => trans('webshop::cart.checkout_validate_messages')['password_login.invalid'],
             ];
@@ -356,6 +369,7 @@ class CartController extends Controller
 
     public function logout(Request $request)
     {
+        self::log('info', 'Logout: ' . Auth::user()->email);
         Auth::logout();
         return back();
     }
@@ -436,6 +450,8 @@ class CartController extends Controller
                 $user->password = bcrypt($request->password_create);
                 $user->save();
 
+                self::log('info', 'Account created ' . $user->email);
+
                 // Attempt to login the newly created user
                 if (!Auth::attempt(['email' => $request->email, 'password' => $request->password_create])) {
                     abort(500, 'Failed to login new user');
@@ -485,6 +501,7 @@ class CartController extends Controller
             Session::put(config('webshop.table_prefix') . 'order_id', $order->id);
 
             // Redirect to Mollie
+            self::log('info', 'Mollie redirect: ' . $order->id . ' ' . $order->payment_id . ' ' . $order->customer['email'] . ' ' . $payment->webhookUrl);
             return redirect($payment->getCheckoutUrl(), 303);
         }
 
