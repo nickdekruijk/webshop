@@ -200,6 +200,18 @@ class CheckoutController extends Controller
             $order->amount = $items->amount_including_vat;
             $order->save();
 
+            // Check if payment method exists
+            $methods = PaymentController::methods();
+            $payment_method = null;
+            $payment_issuer = null;
+            if (isset($methods[$request->payment_method])) {
+                $payment_method = $request->payment_method;
+                $method = $methods[$request->payment_method];
+                if (isset($method['issuers']) && isset($request['payment_method_' . $method['id'] . '_issuer'])) {
+                    $payment_issuer = $request['payment_method_' . $method['id'] . '_issuer'];
+                }
+            }
+
             // Get payment id and set redirect/webhook urls
             $payment = PaymentController::create([
                 'amount' => $order->amount,
@@ -207,6 +219,8 @@ class CheckoutController extends Controller
                 'description' => 'Webshop order ' . $order->id,
                 'webhookUrl' => app()->environment() == 'local' ? null : route('webshop-webhook-payment'),
                 'redirectUrl' => route('webshop-verify-payment'),
+                'method' => $payment_method,
+                'issuer' => $payment_issuer,
             ]);
             $order->payment_id = $payment->id;
             $order->save();

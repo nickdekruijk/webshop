@@ -27,6 +27,8 @@ return [
         'zipcode.required' => 'Zipcode is required.',
         'city.required' => 'City is required.',
         'terms.required' => 'You need to agree.',
+        'payment_method.required' => 'You didn\'t select a payment method.',
+        'payment_method_ideal_issuer.required_with' => 'Select a bank for iDEAL payments.',
         'password_login.required' => 'Password is required.',
         'password_create.required' => 'Password is required.',
         'password_create.confirmed' => 'Passwords do not match.',

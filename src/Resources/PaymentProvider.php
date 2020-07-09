@@ -27,4 +27,14 @@ abstract class PaymentProvider
     {
         // Overwrite this function when you extend this class
     }
+
+    /**
+     * Return available payment methods
+     *
+     * @return array
+     */
+    public function methods()
+    {
+        // Overwrite this function when you extend this class
+    }
 }

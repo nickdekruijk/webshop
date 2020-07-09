@@ -147,6 +147,8 @@ return [
         'city' => 'required',
         'country' => 'required',
         'terms' => 'required',
+        'payment_method' => 'required',
+        'payment_method_ideal_issuer' => 'required_with:payment_method',
     ],
 
     /*

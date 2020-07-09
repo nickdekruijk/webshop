@@ -27,6 +27,8 @@ return [
         'zipcode.required' => 'Postcode is verplicht.',
         'city.required' => 'Plaats is verplicht.',
         'terms.required' => 'Akkoord gaan is verplicht.',
+        'payment_method.required' => 'Kies een betaalwijze.',
+        'payment_method_ideal_issuer.required_with' => 'Kies een bank voor iDEAL.',
         'password_login.required' => 'Wachtwoord is verplicht.',
         'password_create.required' => 'Wachtwoord is verplicht.',
         'password_create.confirmed' => 'Wachtwoord bevestiging komt niet overeen.',

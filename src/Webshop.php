@@ -5,6 +5,7 @@ namespace NickDeKruijk\Webshop;
 use Log;
 use NickDeKruijk\Webshop\Controllers\CartController;
 use NickDeKruijk\Webshop\Controllers\CountryController;
+use NickDeKruijk\Webshop\Controllers\PaymentController;
 
 class Webshop
 {
@@ -89,5 +90,10 @@ class Webshop
     {
         $message = "\t" . request()->ip() . "\t" . $message;
         Log::channel('webshop')->$type($message);
+    }
+
+    public static function paymentMethods()
+    {
+        return PaymentController::methods();
     }
 }

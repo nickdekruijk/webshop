@@ -57,7 +57,39 @@ class Mollie extends PaymentProvider
             'description' => $options['description'],
             'webhookUrl' => $options['webhookUrl'],
             'redirectUrl' => $options['redirectUrl'],
+            'method' => $options['method'],
+            'issuer' => $options['issuer'],
         ]);
         return self::convertPayment($payment);
+    }
+
+    /**
+     * Return available payment methods
+     *
+     * @return array
+     */
+    public function methods()
+    {
+        $methods = [];
+
+        foreach (mollie()->methods->allActive(['include' => 'pricing,issuers']) as $method) {
+            $methods[$method->id] = [
+                'id' => $method->id,
+                'description' => $method->description,
+            ];
+            if ($method->issuers) {
+                $methods[$method->id]['issuers'] = [];
+                foreach ($method->issuers as $issuer) {
+                    $methods[$method->id]['issuers'][$issuer->id] = $issuer->name;
+                }
+                natcasesort($methods[$method->id]['issuers']);
+            }
+        }
+        $methods['test2'] = [
+            'id' => 'test2',
+            'description' => 'Test',
+        ];
+
+        return $methods;
     }
 }

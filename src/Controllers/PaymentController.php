@@ -40,4 +40,14 @@ class PaymentController extends Controller
     {
         return self::provider()->create($options);
     }
+
+    /**
+     * Return available payment methods
+     *
+     * @return array
+     */
+    public static function methods()
+    {
+        return self::provider()->methods();
+    }
 }
