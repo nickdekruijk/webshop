@@ -1,6 +1,6 @@
 <?php
 
-namespace NickDeKruijk\Webshop;
+namespace NickDeKruijk\Webshop\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Order;
@@ -14,6 +14,7 @@ use NickDeKruijk\Webshop\Model\CartItem;
 use NickDeKruijk\Webshop\Model\Discount;
 use NickDeKruijk\Webshop\Model\ShippingRate;
 use NickDeKruijk\Webshop\Rules\CouponCode;
+use NickDeKruijk\Webshop\Webshop;
 use Mollie\Laravel\Facades\Mollie;
 
 class CartController extends Controller

@@ -1,6 +1,6 @@
 <?php
 
-namespace NickDeKruijk\Webshop;
+namespace NickDeKruijk\Webshop\Controllers;
 
 use App\Http\Controllers\Controller;
 use Cache;
