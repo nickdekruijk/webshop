@@ -2,6 +2,7 @@
 
 namespace NickDeKruijk\Webshop;
 
+use Log;
 use NickDeKruijk\Webshop\Controllers\CartController;
 use NickDeKruijk\Webshop\Controllers\CountryController;
 
@@ -75,5 +76,18 @@ class Webshop
     {
         $items = CartController::cartItems(self::old('coupon_code'));
         return view('webshop::showcart', compact('vat_show', 'hide_interaction', 'items'));
+    }
+
+    /**
+     * Write a log entry to the webshop log channel
+     *
+     * @param string $type
+     * @param string $message
+     * @return void
+     */
+    public static function log($type, $message)
+    {
+        $message = "\t" . request()->ip() . "\t" . $message;
+        Log::channel('webshop')->$type($message);
     }
 }

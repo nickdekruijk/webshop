@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Order;
 use Auth;
 use Illuminate\Http\Request;
-use Log;
 use Mail;
 use NickDeKruijk\Webshop\Rules\CouponCode;
 use NickDeKruijk\Webshop\Webshop;
@@ -14,19 +13,6 @@ use Session;
 
 class CheckoutController extends Controller
 {
-    /**
-     * Write a log entry to the webshop log channel
-     *
-     * @param string $type
-     * @param string $message
-     * @return void
-     */
-    private static function log($type, $message)
-    {
-        $message = "\t" . request()->ip() . "\t" . $message;
-        Log::channel('webshop')->$type($message);
-    }
-
     /**
      * Return an instance or the Order model
      *
@@ -48,7 +34,7 @@ class CheckoutController extends Controller
             }
             foreach ($mailables as $mailable) {
                 Mail::send(new $mailable($order));
-                self::log('info', 'Mail sent: ' . $mailable . ' ' . $order->customer['email']);
+                Webshop::log('info', 'Mail sent: ' . $mailable . ' ' . $order->customer['email']);
             }
             $order->paid = true;
             $order->save();
@@ -60,7 +46,7 @@ class CheckoutController extends Controller
         $order = $this->getOrderModel()::findOrFail(session(config('webshop.table_prefix') . 'order_id'));
         $payment = PaymentController::payment($order->payment_id);
         if ($payment->paid) {
-            self::log('info', 'Verified payment: ' . $order->payment_id);
+            Webshop::log('info', 'Verified payment: ' . $order->payment_id);
             $this->markOrderAsPaid($order);
             if (!config('app.debug')) {
                 CartController::empty();
@@ -68,14 +54,14 @@ class CheckoutController extends Controller
             Session::put(config('webshop.table_prefix') . 'order_id', null);
             return redirect(config('webshop.checkout_redirect_paid'));
         } else {
-            self::log('notice', 'Failed payment: ' . $order->payment_id . ' (' . $payment->status . ')');
+            Webshop::log('notice', 'Failed payment: ' . $order->payment_id . ' (' . $payment->status . ')');
             return redirect()->route('webshop-cart-show')->with(['payment_error' => trans('webshop::cart.payment_' . $payment->status)]);
         }
     }
 
     public function webhookPayment(Request $request)
     {
-        self::log('info', 'webhookPayment: ' . $request->id);
+        Webshop::log('info', 'webhookPayment: ' . $request->id);
         abort_if(!$request->id, 404);
         $order = $this->getOrderModel()::where('payment_id', $request->id)->firstOrFail();
         $payment = PaymentController::payment($order->payment_id);
@@ -87,7 +73,7 @@ class CheckoutController extends Controller
     public function login(Request $request)
     {
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password_login])) {
-            self::log('info', 'Login: ' . $request->email);
+            Webshop::log('info', 'Login: ' . $request->email);
             // Get customer columns from user
             $column = config('webshop.table_prefix') . 'customer';
             $customer = Auth::user()->$column;
@@ -100,7 +86,7 @@ class CheckoutController extends Controller
             }
             return back();
         } else {
-            self::log('notice', 'Login failed: ' . $request->email);
+            Webshop::log('notice', 'Login failed: ' . $request->email);
             $errors = [
                 'password_login' => trans('webshop::cart.checkout_validate_messages')['password_login.invalid'],
             ];
@@ -110,7 +96,7 @@ class CheckoutController extends Controller
 
     public function logout(Request $request)
     {
-        self::log('info', 'Logout: ' . Auth::user()->email);
+        Webshop::log('info', 'Logout: ' . Auth::user()->email);
         Auth::logout();
         return back();
     }
@@ -180,7 +166,7 @@ class CheckoutController extends Controller
                 $user->password = bcrypt($request->password_create);
                 $user->save();
 
-                self::log('info', 'Account created ' . $user->email);
+                Webshop::log('info', 'Account created ' . $user->email);
 
                 // Attempt to login the newly created user
                 if (!Auth::attempt(['email' => $request->email, 'password' => $request->password_create])) {
@@ -229,7 +215,7 @@ class CheckoutController extends Controller
             Session::put(config('webshop.table_prefix') . 'order_id', $order->id);
 
             // Redirect to payment provider
-            self::log('info', 'Payment redirect: ' . $order->id . ' ' . $order->payment_id . ' ' . $order->customer['email'] . ' ' . $payment->webhookUrl);
+            Webshop::log('info', 'Payment redirect: ' . $order->id . ' ' . $order->payment_id . ' ' . $order->customer['email'] . ' ' . $payment->webhookUrl);
             return redirect($payment->checkoutUrl, 303);
         }
 
