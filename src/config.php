@@ -123,8 +123,7 @@ return [
     | payment_provider
     |--------------------------------------------------------------------------
     |
-    | Use this class for payment provider. This class has properties like 
-    | payment methods, redirects, webhooks and more
+    | PaymentProvider to use, must have at least payment() and create() methods
     |
     */
 
