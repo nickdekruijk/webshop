@@ -17,6 +17,12 @@ abstract class PaymentProvider
         // Overwrite this function when you extend this class
     }
 
+    /**
+     * Create payment with provider
+     *
+     * @param array $options
+     * @return Payment
+     */
     public function create(array $options)
     {
         // Overwrite this function when you extend this class

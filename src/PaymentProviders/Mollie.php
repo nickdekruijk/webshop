@@ -7,7 +7,13 @@ use NickDeKruijk\Webshop\Resources\PaymentProvider;
 
 class Mollie extends PaymentProvider
 {
-    private static function convertPayment($result)
+    /**
+     * convert a Mollie Payment object to our Payment
+     *
+     * @param \Mollie\Api\Resources\Payment $result
+     * @return Payment
+     */
+    private static function convertPayment(\Mollie\Api\Resources\Payment $result)
     {
         $payment = new Payment;
 
@@ -35,6 +41,12 @@ class Mollie extends PaymentProvider
         return self::convertPayment(\Mollie\Laravel\Facades\Mollie::api()->payments()->get($payment_id));
     }
 
+    /**
+     * Create payment with provider
+     *
+     * @param array $options
+     * @return Payment
+     */
     public function create(array $options)
     {
         $payment = \Mollie\Laravel\Facades\Mollie::api()->payments()->create([
