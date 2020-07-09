@@ -2,7 +2,6 @@
 
 namespace NickDeKruijk\Webshop\PaymentProviders;
 
-// use Mollie\Laravel\Facades\Mollie;
 use NickDeKruijk\Webshop\Resources\Payment;
 use NickDeKruijk\Webshop\Resources\PaymentProvider;
 
