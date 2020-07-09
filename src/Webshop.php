@@ -2,9 +2,6 @@
 
 namespace NickDeKruijk\Webshop;
 
-use NickDeKruijk\Webshop\Model\Discount;
-use NickDeKruijk\Webshop\Model\ShippingRate;
-use Session;
 use NickDeKruijk\Webshop\Controllers\CartController;
 use NickDeKruijk\Webshop\Controllers\CountryController;
 
