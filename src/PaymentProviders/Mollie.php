@@ -38,7 +38,7 @@ class Mollie extends PaymentProvider
      */
     public function payment($payment_id)
     {
-        return self::convertPayment(\Mollie\Laravel\Facades\Mollie::api()->payments()->get($payment_id));
+        return self::convertPayment(mollie()->payments()->get($payment_id));
     }
 
     /**
@@ -49,7 +49,7 @@ class Mollie extends PaymentProvider
      */
     public function create(array $options)
     {
-        $payment = \Mollie\Laravel\Facades\Mollie::api()->payments()->create([
+        $payment = mollie()->payments()->create([
             'amount' => [
                 'currency' => $options['currency'],
                 'value' => $options['amount'],
