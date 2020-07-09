@@ -85,10 +85,6 @@ class Mollie extends PaymentProvider
                 natcasesort($methods[$method->id]['issuers']);
             }
         }
-        $methods['test2'] = [
-            'id' => 'test2',
-            'description' => 'Test',
-        ];
 
         return $methods;
     }
