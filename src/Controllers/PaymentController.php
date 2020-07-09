@@ -27,8 +27,7 @@ class PaymentController extends Controller
      */
     public static function payment($payment_id)
     {
-        $payment = self::provider()->payment($payment_id);
-        return $payment;
+        return self::provider()->payment($payment_id);
     }
 
     /**
@@ -39,7 +38,6 @@ class PaymentController extends Controller
      */
     public static function create(array $options)
     {
-        $payment = self::provider()->create($options);
-        return $payment;
+        return self::provider()->create($options);
     }
 }
