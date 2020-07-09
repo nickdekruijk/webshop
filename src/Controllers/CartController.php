@@ -15,7 +15,6 @@ use NickDeKruijk\Webshop\Model\Discount;
 use NickDeKruijk\Webshop\Model\ShippingRate;
 use NickDeKruijk\Webshop\Rules\CouponCode;
 use NickDeKruijk\Webshop\Webshop;
-use Mollie\Laravel\Facades\Mollie;
 
 class CartController extends Controller
 {
@@ -318,8 +317,8 @@ class CartController extends Controller
     public function verifyPayment(Request $request)
     {
         $order = $this->getOrderModel()::findOrFail(session(config('webshop.table_prefix') . 'order_id'));
-        $payment = Mollie::api()->payments()->get($order->payment_id);
-        if ($payment->isPaid()) {
+        $payment = PaymentController::payment($order->payment_id);
+        if ($payment->paid) {
             self::log('info', 'Verified payment: ' . $order->payment_id);
             $this->markOrderAsPaid($order);
             if (!config('app.debug')) {
@@ -333,13 +332,13 @@ class CartController extends Controller
         }
     }
 
-    public function webhookMollie(Request $request)
+    public function webhookPayment(Request $request)
     {
-        self::log('info', 'Mollie webhook: ' . $request->id);
+        self::log('info', 'webhookPayment: ' . $request->id);
         abort_if(!$request->id, 404);
         $order = $this->getOrderModel()::where('payment_id', $request->id)->firstOrFail();
-        $payment = Mollie::api()->payments()->get($request->id);
-        if ($payment->isPaid()) {
+        $payment = PaymentController::payment($order->payment_id);
+        if ($payment->paid) {
             $this->markOrderAsPaid($order);
         }
     }
@@ -485,15 +484,13 @@ class CartController extends Controller
             $order->amount = $items->amount_including_vat;
             $order->save();
 
-            // Get mollie payment id and set redirect/webhook urls
-            $payment = Mollie::api()->payments()->create([
-                'amount' => [
-                    'currency' => 'EUR',
-                    'value' => $order->amount,
-                ],
+            // Get payment id and set redirect/webhook urls
+            $payment = PaymentController::create([
+                'amount' => $order->amount,
+                'currency' => 'EUR',
                 'description' => 'Webshop order ' . $order->id,
-                'webhookUrl' => app()->environment() == 'local' ? null : route('webshop-webhook-mollie'),
-                'redirectUrl' => route('webshop-checkout-verify'),
+                'webhookUrl' => app()->environment() == 'local' ? null : route('webshop-webhook-payment'),
+                'redirectUrl' => route('webshop-verify-payment'),
             ]);
             $order->payment_id = $payment->id;
             $order->save();
@@ -501,9 +498,9 @@ class CartController extends Controller
             // Store order id in session
             Session::put(config('webshop.table_prefix') . 'order_id', $order->id);
 
-            // Redirect to Mollie
-            self::log('info', 'Mollie redirect: ' . $order->id . ' ' . $order->payment_id . ' ' . $order->customer['email'] . ' ' . $payment->webhookUrl);
-            return redirect($payment->getCheckoutUrl(), 303);
+            // Redirect to payment provider
+            self::log('info', 'Payment redirect: ' . $order->id . ' ' . $order->payment_id . ' ' . $order->customer['email'] . ' ' . $payment->webhookUrl);
+            return redirect($payment->checkoutUrl, 303);
         }
 
         // No checkout, just update quantity and validate coupon_code/shipping

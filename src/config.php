@@ -118,9 +118,17 @@ return [
 
     'routes_prefix' => 'webshop',
 
-    'payment_methods' => [
-        'mollie',
-    ],
+    /*
+    |--------------------------------------------------------------------------
+    | payment_provider
+    |--------------------------------------------------------------------------
+    |
+    | Use this class for payment provider. This class has properties like 
+    | payment methods, redirects, webhooks and more
+    |
+    */
+
+    'payment_provider' => 'NickDeKruijk\Webshop\PaymentProviders\Mollie',
 
     /*
     |--------------------------------------------------------------------------
