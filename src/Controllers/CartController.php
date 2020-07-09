@@ -287,7 +287,10 @@ class CartController extends Controller
      */
     public static function empty()
     {
+        Webshop::log('debug', 'Empty cart: ' . Webshop::old('email'));
         $cart = self::currentCart();
-        $cart->delete();
+        if ($cart) {
+            $cart->delete();
+        }
     }
 }
