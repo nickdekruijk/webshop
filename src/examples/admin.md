@@ -30,7 +30,7 @@ Add and edit the modules below to your `config/admin.php` file.
                     'orderby' => 'sort',
                     'validate' => 'required',
                 ],
-                'pictures' => [
+                'images' => [
                     'title_nl' => 'Afbeeldingen',
                     'type' => 'images',
                 ],
