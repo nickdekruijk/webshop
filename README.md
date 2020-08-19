@@ -10,6 +10,15 @@ Add a simple webshop to your Laravel project
 ## Installation
 `composer require nickdekruijk/webshop`
 
+Publish the config file with
+
+`php artisan vendor:publish --tag=config --provider="NickDeKruijk\Webshop\ServiceProvider"`
+
+### Product model/table
+You will need a working Product model and database table. See the sample [migration](https://github.com/nickdekruijk/webshop/blob/master/src/examples/2020_08_19_152120_create_products_table.php) and [model](https://github.com/nickdekruijk/webshop/blob/master/src/examples/Product.php) in the [examples folder](https://github.com/nickdekruijk/webshop/tree/master/src/examples).
+
+If your Product model differs from `App\Product` then change the product_model value in your `config/webshop.php` file.
+
 More info coming soon...
 
 ## Some seeds with data to start with
