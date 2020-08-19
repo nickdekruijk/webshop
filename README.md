@@ -21,6 +21,9 @@ If your Product model differs from `App\Product` then change the product_model v
 
 More info coming soon...
 
+### Admin package integration
+To manage products/vat/coupons etc with the [nickdekruijk/admin](https://github.com/nickdekruijk/admin) package add the modules as described in [this example file](https://github.com/nickdekruijk/webshop/blob/master/src/examples/admin.md) to your `config/admin.php` file.
+
 ## Some seeds with data to start with
 Dutch VAT
 `php artisan db:seed --class=NickDeKruijk\\Webshop\\Seeds\\VatDutch`
