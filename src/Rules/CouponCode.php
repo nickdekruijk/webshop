@@ -3,7 +3,7 @@
 namespace NickDeKruijk\Webshop\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
-use NickDeKruijk\Webshop\CartController;
+use NickDeKruijk\Webshop\Controllers\CartController;
 use NickDeKruijk\Webshop\Model\Discount;
 
 class CouponCode implements Rule
