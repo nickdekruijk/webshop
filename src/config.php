@@ -148,7 +148,8 @@ return [
         'country' => 'required',
         'terms' => 'required',
         'payment_method' => 'required',
-        'payment_method_ideal_issuer' => 'required_with:payment_method',
+        'payment_method_ideal_issuer' => 'required_if:payment_method,ideal',
+        'payment_method_kbc_issuer' => 'required_if:payment_method,kbc',
     ],
 
     /*
