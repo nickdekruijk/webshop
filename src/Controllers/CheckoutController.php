@@ -144,7 +144,7 @@ class CheckoutController extends Controller
                 unset($validate['email']);
             }
 
-            // Also check coupon_code using array_reverse to put it at the top
+            // Also validate coupon_code using array_reverse to put it at the top
             $validate = array_reverse($validate, true);
             $validate['coupon_code'] = ['nullable', new CouponCode];
             $validate = array_reverse($validate, true);
