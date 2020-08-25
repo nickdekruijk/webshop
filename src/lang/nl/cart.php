@@ -24,6 +24,7 @@ return [
     'checkout_validate_messages' => [
         'webshop-shipping.required' => 'Geen verzendmethode geselecteerd.',
         'coupon_code' => 'Ongeldige kortingscode of niet van toepassing.',
+        'email.required' => 'E-mailadres is verplicht.',
         'zipcode.required' => 'Postcode is verplicht.',
         'city.required' => 'Plaats is verplicht.',
         'terms.required' => 'Akkoord gaan is verplicht.',

@@ -24,6 +24,7 @@ return [
     'checkout_validate_messages' => [
         'webshop-shipping.required' => 'No shipping option selected.',
         'coupon_code' => 'Invalid coupon code.',
+        'email.required' => 'Emailaddress is required.',
         'zipcode.required' => 'Zipcode is required.',
         'city.required' => 'City is required.',
         'terms.required' => 'You need to agree.',
