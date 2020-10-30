@@ -41,4 +41,9 @@ class Product extends Model
     {
         return $this->belongsTo("NickDeKruijk\Webshop\Model\Vat");
     }
+
+    public function options()
+    {
+        return $this->hasMany('App\Models\ProductOption');
+    }
 }
