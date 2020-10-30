@@ -18,13 +18,11 @@ class CreateProductsTable extends Migration
             $table->boolean('active')->default(1)->index();
             $table->string('name')->index();
             $table->decimal('price', 10, 2)->nullable()->index();
-            $table->integer('vat_id')->unsigned()->default(1)->after('price');
+            $table->foreignId('vat_id')->constrained(config('webshop.table_prefix') . 'vats')->onDelete('cascade');
             $table->text('images')->nullable();
             $table->longtext('description')->nullable();
             $table->integer('sort')->unsigned()->nullable()->index();
             $table->timestamps();
-
-            $table->foreign('vat_id')->references('id')->on(config('webshop.table_prefix') . 'vats');
         });
     }
 
