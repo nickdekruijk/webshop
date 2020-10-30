@@ -12,7 +12,7 @@ return [
     |
     */
 
-    'user_model' => 'App\User',
+    'user_model' => 'App\Models\User',
 
     /*
     |--------------------------------------------------------------------------
@@ -36,7 +36,7 @@ return [
     |
     */
 
-    'product_model' => 'App\Product',
+    'product_model' => 'App\Models\Product',
 
     /*
     |--------------------------------------------------------------------------
@@ -69,7 +69,7 @@ return [
     |
     */
 
-    'product_option_model' => 'App\ProductOption',
+    'product_option_model' => 'App\Models\ProductOption',
 
     /*
     |--------------------------------------------------------------------------
@@ -198,7 +198,7 @@ return [
     | cookie (not implemented yet)
     |--------------------------------------------------------------------------
     |
-    | By default the cart_id will be store in the session. So when the users
+    | By default the cart_id will be stored in the session. So when the users
     | session expires the cart will be empty. To keep the cart longer we can
     | use a dedicated cookie with longer lifetime to store the cart_id
     |
@@ -214,7 +214,7 @@ return [
 
     'cookie' => [
         'enabled' => false,
-        'name' => Str::slug(env('APP_NAME', 'laravel'), '_') . '_cart',
+        'name' => env('APP_NAME', 'laravel') . '_cart',
         'lifetime' => 60 * 24 * 365,
         'path' => '/',
         'domain' => null,
