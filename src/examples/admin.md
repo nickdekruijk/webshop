@@ -31,6 +31,30 @@ Add and edit the modules below to your `config/admin.php` file.
                     'orderby' => 'sort',
                     'validate' => 'required',
                 ],
+                'options' => [
+                    'title' => 'Options / Variants',
+                    'title_nl' => 'Opties / Varianten',
+                    'type' => 'rows',
+                    'model' => 'App\Models\ProductOption',
+                    'self' => 'product_id',
+                    'orderby' => 'sort',
+                    'sortable' => true,
+                    'active' => 'active',
+                    'columns' => [
+                        'title' => [
+                            'title' => 'Short title',
+                            'title_nl' => 'Korte titel',
+                        ],
+                        'description' => [
+                            'title' => 'Descriptions (e.g. size / color)',
+                            'title_nl' => 'Beschrijving (bijv. maat / kleur)',
+                        ],
+                        'price' => [
+                            'title_nl' => 'Prijs',
+                            'validate' => 'required|numeric|between:0.00,99999.99',
+                        ],
+                    ],
+                ],
                 'images' => [
                     'title_nl' => 'Afbeeldingen',
                     'type' => 'images',
