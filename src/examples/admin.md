@@ -5,10 +5,11 @@ Add and edit the modules below to your `config/admin.php` file.
             'view' => 'admin::model',
             'icon' => 'fa-gift',
             'title_nl' => 'Producten',
-            'model' => 'App\Product',
+            'model' => 'App\Models\Product',
             'index' => 'name,price,home,vat.description',
             'active' => 'active',
-            'orderBy' => 'name',
+            'orderBy' => 'sort',
+            'sortable' => true,
             'columns' => [
                 'active' => [
                     'title_nl' => 'Actief',
@@ -55,7 +56,7 @@ Add and edit the modules below to your `config/admin.php` file.
                 'user_id' => [
                     'title_nl' => 'Gebruiker',
                     'type' => 'foreign',
-                    'model' => 'App\User',
+                    'model' => 'App\Models\User',
                     'columns' => 'name,email',
                     'orderby' => 'name',
                 ],
