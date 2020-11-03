@@ -48,10 +48,10 @@ class ShippingRate extends Model
     public function scopeValid($query, $amount, $weight, $country)
     {
         $query->where(function ($query) use ($amount) {
-            $query->whereNull('amount_from')->orWhere('amount_from', '>=', $amount);
+            $query->whereNull('amount_from')->orWhere('amount_from', '<=', $amount);
         });
         $query->where(function ($query) use ($amount) {
-            $query->whereNull('amount_to')->orWhere('amount_to', '<', $amount);
+            $query->whereNull('amount_to')->orWhere('amount_to', '>', $amount);
         });
         $query->where(function ($query) use ($weight) {
             $query->whereNull('weight_from')->orWhere('weight_from', '<=', $weight);
