@@ -3,7 +3,6 @@
 namespace NickDeKruijk\Webshop\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Order;
 use Auth;
 use Illuminate\Http\Request;
 use Mail;
@@ -24,7 +23,7 @@ class CheckoutController extends Controller
         return new $model;
     }
 
-    public function markOrderAsPaid(Order $order)
+    public function markOrderAsPaid($order)
     {
         if (!$order->paid) {
             // Send notifications
