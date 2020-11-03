@@ -17,6 +17,7 @@ return [
     'select-shipping' => 'Selecteer verzendmethode',
     'payment_canceled' => 'Betaling geannuleerd, probeerd het nog eens.',
     'payment_failed' => 'Betaling mislukt, probeerd het nog eens.',
+    'payment_open' => 'Betaling niet afgerond, probeerd het nog eens.',
     'discount' => 'Korting',
     'vat' => 'BTW',
     'vatIncl' => 'Inclusief BTW',
