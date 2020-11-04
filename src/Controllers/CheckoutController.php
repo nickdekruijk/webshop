@@ -199,7 +199,7 @@ class CheckoutController extends Controller
             // Finalize the Order and save it
             $order->customer = $customer;
             $order->html = Webshop::showCart(1, true);
-            $items = CartController::cartItems($customer['coupon_code']);
+            $items = CartController::cartItems($customer['coupon_code'] ?? null);
             $order->products = $items->items;
             $order->amount = $items->amount_including_vat;
             $order->save();
