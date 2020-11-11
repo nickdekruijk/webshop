@@ -2,6 +2,8 @@
 
 namespace NickDeKruijk\Webshop;
 
+use NickDeKruijk\Webshop\Commands\ConvertOrderProductsToOrderLines;
+
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
     /**
@@ -19,6 +21,11 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->loadTranslationsFrom(__DIR__ . '/lang', 'webshop');
         if (config('webshop.migrations', true)) {
             $this->loadMigrationsFrom(__DIR__ . '/migrations');
+        }
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                ConvertOrderProductsToOrderLines::class,
+            ]);
         }
     }
 

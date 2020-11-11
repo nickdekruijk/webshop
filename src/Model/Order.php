@@ -24,4 +24,9 @@ class Order extends Model
     {
         return $this->belongsTo(config('webshop.user_model'));
     }
+
+    public function lines()
+    {
+        return $this->hasMany(OrderLine::class);
+    }
 }

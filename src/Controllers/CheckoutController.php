@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Auth;
 use Illuminate\Http\Request;
 use Mail;
+use NickDeKruijk\Webshop\Model\OrderLine;
 use NickDeKruijk\Webshop\Rules\CouponCode;
 use NickDeKruijk\Webshop\Webshop;
 use Session;
@@ -203,6 +204,22 @@ class CheckoutController extends Controller
             $order->products = $items->items;
             $order->amount = $items->amount_including_vat;
             $order->save();
+
+            // Attach OrderLine rows
+            $order->lines()->delete();
+            foreach ($items->items as $item) {
+                $orderline = new Orderline;
+                $orderline->order_id = $order->id;
+                $orderline->product_id = $item->product_id ?? null;
+                $orderline->product_option_id = $item->product_option_id ?? null;
+                $orderline->title = $item->title;
+                $orderline->quantity = $item->quantity;
+                $orderline->weight = $item->weight ?? null;
+                $orderline->price = $item->price->price;
+                $orderline->vat_rate = $item->price->vat_rate;
+                $orderline->vat_included = $item->price->vat_included;
+                $orderline->save();
+            }
 
             // Check if payment method exists
             $methods = PaymentController::methods();
