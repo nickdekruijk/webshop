@@ -20,7 +20,11 @@ class CreateOrderLinesTable extends Migration
             $product_option = config('webshop.product_option_model');
             $table->foreignId('order_id')->constrained(config('webshop.table_prefix') . 'orders')->onDelete('cascade');
             $table->foreignId('product_id')->nullable()->constrained((new $product)->getTable());
-            $table->foreignId('product_option_id')->nullable()->constrained((new $product_option)->getTable());
+            if ($product_option) {
+                $table->foreignId('product_option_id')->nullable()->constrained((new $product_option)->getTable());
+            } else {
+                $table->foreignId('product_option_id')->nullable();
+            }
             $table->string('title');
             $table->decimal('quantity', 15, 5);
             $table->decimal('price', 10, 2);
