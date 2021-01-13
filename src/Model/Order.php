@@ -29,4 +29,28 @@ class Order extends Model
     {
         return $this->hasMany(OrderLine::class);
     }
+
+    public function getQuarterAttribute($value)
+    {
+        $quarter = $this->created_at->format('Y') . '-' . (ceil($this->created_at->format('m') / 3));
+        return $value ?: $quarter;
+    }
+
+    public function getAmountVatAttribute($value)
+    {
+        $vat = 0;
+        foreach ($this->products as $product) {
+            $vat += ($product['price']['price_including_vat'] - $product['price']['price_excluding_vat']) * $product['quantity'];
+        }
+        // if ($vat < $this->amount) dd($vat, $this->amount);
+        return $value ?: $vat;
+    }
+    public function getAmountExclVatAttribute($value)
+    {
+        $vat = 0;
+        foreach ($this->products as $product) {
+            $vat += $product['price']['price_excluding_vat'] * $product['quantity'];
+        }
+        return $value ?: $vat;
+    }
 }
