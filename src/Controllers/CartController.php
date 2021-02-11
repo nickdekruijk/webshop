@@ -239,9 +239,9 @@ class CartController extends Controller
 
             if ($shipping->price->vat_included) {
                 $shipping->price->price_including_vat = $shipping_rate->rate;
-                $shipping->price->price_excluding_vat = number_format($shipping_rate->rate / ($max_vat_rate / 100 + 1), 2);
+                $shipping->price->price_excluding_vat = round($shipping_rate->rate / ($max_vat_rate / 100 + 1), 2);
             } else {
-                $shipping->price->price_including_vat = number_format($shipping_rate->rate * ($max_vat_rate / 100 + 1), 2);
+                $shipping->price->price_including_vat = round($shipping_rate->rate * ($max_vat_rate / 100 + 1), 2);
                 $shipping->price->price_excluding_vat = $shipping_rate->rate;
             }
             $response->amount_vat[$max_vat_rate] = ($response->amount_vat[$max_vat_rate] ?? 0) + $shipping->price->price_including_vat - $shipping->price->price_excluding_vat;
@@ -258,7 +258,7 @@ class CartController extends Controller
 
         foreach ($discounts as $discount) {
             if ($coupon_code == $discount->coupon_code || !$discount->coupon_code) {
-                $discountAmount = number_format(-$discount->discount_abs - ($response->amount_including_vat * $discount->discount_perc / 100), 2);
+                $discountAmount = round(-$discount->discount_abs - ($response->amount_including_vat * $discount->discount_perc / 100), 2);
                 $response->amount_including_vat += $discountAmount;
                 $response->items[] = (object) [
                     'id' => null,

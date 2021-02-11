@@ -40,10 +40,10 @@ class CartItem extends Model
         $price['vat_rate'] = $this->product->vat->rate;
         if ($price['vat_included']) {
             $price['price_including_vat'] = $price['price'];
-            $price['price_excluding_vat'] = number_format($price['price'] / ($price['vat_rate'] / 100 + 1), 2);
+            $price['price_excluding_vat'] = round($price['price'] / ($price['vat_rate'] / 100 + 1), 2);
             $price['price_vat'] = $price['price_including_vat'] - $price['price_excluding_vat'];
         } else {
-            $price['price_including_vat'] = number_format($price['price'] * ($price['vat_rate'] / 100 + 1), 2);
+            $price['price_including_vat'] = round($price['price'] * ($price['vat_rate'] / 100 + 1), 2);
             $price['price_excluding_vat'] = $price['price'];
             $price['price_vat'] = $price['price_including_vat'] - $price['price_excluding_vat'];
         }
