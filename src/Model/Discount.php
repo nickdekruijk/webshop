@@ -27,6 +27,14 @@ class Discount extends Model
                     $query
                         ->whereNull('amount_max')
                         ->orWhere('amount_max', '>', $amount);
+                })->where(function ($query) {
+                    $query
+                        ->whereNull('date_start')
+                        ->orWhere('date_start', '<=', now());
+                })->where(function ($query) {
+                    $query
+                        ->whereNull('date_end')
+                        ->orWhere('date_end', '>=', now());
                 });
         } else {
             return $query->where('active', 1);
