@@ -41,7 +41,7 @@ class Discount extends Model
         }
     }
 
-    public function scopeValid($query, $coupon_code = null, $amount)
+    public function scopeValid($query, $coupon_code, $amount)
     {
         return $query->active($amount)->where('coupon_code', $coupon_code);
     }
