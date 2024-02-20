@@ -6,6 +6,7 @@ use Log;
 use NickDeKruijk\Webshop\Controllers\CartController;
 use NickDeKruijk\Webshop\Controllers\CountryController;
 use NickDeKruijk\Webshop\Controllers\PaymentController;
+use NickDeKruijk\Webshop\Model\ShippingRate;
 
 class Webshop
 {
@@ -77,6 +78,12 @@ class Webshop
     {
         $items = CartController::cartItems(self::old('coupon_code'));
         return view('webshop::showcart', compact('vat_show', 'hide_interaction', 'items'));
+    }
+
+    public function getShippingDays(): array
+    {
+        $shipping = ShippingRate::find(self::old('webshop-shipping'));
+        return $shipping->getShippingDays();
     }
 
     /**

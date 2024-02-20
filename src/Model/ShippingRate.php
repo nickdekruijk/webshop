@@ -13,6 +13,13 @@ class ShippingRate extends Model
         'amount_to' => 'decimal:5',
         'weight_from' => 'decimal:5',
         'weight_to' => 'decimal:5',
+        'sunday' => 'boolean',
+        'monday' => 'boolean',
+        'tuesday' => 'boolean',
+        'wednesday' => 'boolean',
+        'thursday' => 'boolean',
+        'friday' => 'boolean',
+        'saturday' => 'boolean',
     ];
 
     public function __construct(array $attributes = [])
@@ -20,6 +27,21 @@ class ShippingRate extends Model
         parent::__construct($attributes);
 
         $this->table = config('webshop.table_prefix') . 'shipping_rates';
+    }
+
+    public function getShippingDays(): array
+    {
+        $days = [];
+
+        $daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+        foreach ($daysOfWeek as $n => $day) {
+            if ($this->$day) {
+                $days[] = $n;
+            }
+        }
+
+        return $days;
     }
 
     public function vat()
