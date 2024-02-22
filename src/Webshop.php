@@ -83,7 +83,7 @@ class Webshop
     public function getShippingDays(): array
     {
         $shipping = ShippingRate::find(self::old('webshop-shipping'));
-        return $shipping->getShippingDays();
+        return $shipping?->getShippingDays() ?: [];
     }
 
     /**
