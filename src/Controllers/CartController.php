@@ -142,9 +142,6 @@ class CartController extends Controller
     {
         // Get cart contents
         $cart = self::currentCart();
-        if (!$cart) {
-            return [];
-        }
 
         // Initialize response object
         $response = (object) [
@@ -157,6 +154,10 @@ class CartController extends Controller
             'count' => 0,
             'count_unique' => 0,
         ];
+
+        if (!$cart) {
+            return  $response;
+        }
 
         // Used for tracking the highest VAT rate to calculate shipping costs
         $max_vat_rate = 0;
