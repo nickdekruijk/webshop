@@ -12,7 +12,7 @@
         "bobey/geoip2-geolite2-composer": "^1.6",
         "geoip2/geoip2": "^2.10",
         "laravel/framework": "^11.0",
-        "mledoze/countries": "^5.0",
+        "mledoze/countries": "dev-master",
         "mollie/laravel-mollie": "^3.0",
         "php": "^8.1"
     },
