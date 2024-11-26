@@ -2,6 +2,7 @@
 
 namespace NickDeKruijk\Webshop\PaymentProviders;
 
+use Mollie\Laravel\Facades\Mollie as MollieFacade;
 use NickDeKruijk\Webshop\Resources\Payment;
 use NickDeKruijk\Webshop\Resources\PaymentProvider;
 
@@ -38,7 +39,7 @@ class Mollie extends PaymentProvider
      */
     public function payment($payment_id)
     {
-        return self::convertPayment(mollie()->payments()->get($payment_id));
+        return self::convertPayment(MollieFacade::api()->payments->get($payment_id));
     }
 
     /**
@@ -49,7 +50,7 @@ class Mollie extends PaymentProvider
      */
     public function create(array $options)
     {
-        $payment = mollie()->payments()->create([
+        $payment = MollieFacade::api()->payments->create([
             'amount' => [
                 'currency' => $options['currency'],
                 'value' => $options['amount'],
@@ -72,7 +73,7 @@ class Mollie extends PaymentProvider
     {
         $methods = [];
 
-        foreach (mollie()->methods->allActive(['include' => 'pricing,issuers']) as $method) {
+        foreach (MollieFacade::api()->methods->allActive(['include' => 'pricing,issuers']) as $method) {
             $methods[$method->id] = [
                 'id' => $method->id,
                 'description' => $method->description,
