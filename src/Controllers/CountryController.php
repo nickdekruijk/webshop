@@ -17,16 +17,16 @@ class CountryController extends Controller
     public static function geoCountry()
     {
         $ip = request()->ip();
-        if ($ip == '127.0.0.1') {
-            // Fake a Dutch IP adres for development testing
-            $ip = '82.217.110.129';
-        }
         if ($get = Cache::get('geoip_' . $ip)) {
             return $get;
         }
         $reader = new Reader(base_path('vendor') . '/bobey/geoip2-geolite2-composer/GeoIP2/GeoLite2-City.mmdb');
-        $record = $reader->city($ip);
-        Cache::put('geoip_' . $ip, $record->country->isoCode, 3600);
+        try {
+            $record = $reader->city($ip);
+            Cache::put('geoip_' . $ip, $record->country->isoCode, 3600);
+        } catch (\Throwable $th) {
+            return null;
+        }
         return $record->country->isoCode;
     }
 
